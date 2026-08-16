@@ -1,0 +1,27 @@
+RewriteEngine On
+
+# ------------------------------------------------------------
+# BASE DEL BACKEND
+# ------------------------------------------------------------
+
+RewriteBase /banda/backend/
+
+# ------------------------------------------------------------
+# NO MODIFICAR ARCHIVOS NI CARPETAS REALES
+# ------------------------------------------------------------
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ------------------------------------------------------------
+# RUTA DE INSTRUMENTOS
+# ------------------------------------------------------------
+
+RewriteRule ^instrumentos/?$ routes/instrumentos.php [L,QSA]
+
+# ------------------------------------------------------------
+# RUTA PRINCIPAL
+# ------------------------------------------------------------
+
+RewriteRule ^$ index.php [L]

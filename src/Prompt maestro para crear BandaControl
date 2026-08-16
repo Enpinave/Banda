@@ -1,0 +1,602 @@
+Quiero desarrollar desde cero una aplicación web llamada "BandaControl"
+para administrar el inventario y los instrumentos de la banda de marchas
+de un colegio.
+
+Quiero que el proyecto se construya de manera profesional, ordenada,
+modular y escalable, utilizando:
+
+- React
+- Vite
+- JavaScript
+- React Router DOM
+- Lucide React para iconos
+- CSS puro, organizado por módulos
+- LocalStorage como persistencia inicial
+- Git/GitHub para control de versiones
+
+NO quiero una aplicación de ejemplo desechable.
+Quiero construir una aplicación funcional que posteriormente pueda
+conectarse a una base de datos y un backend.
+
+============================================================
+1. IDENTIDAD VISUAL
+============================================================
+
+La aplicación debe utilizar los colores institucionales:
+
+- Rojo
+- Blanco
+- Azul
+- Negro
+
+Debe tener una apariencia:
+
+- Moderna
+- Profesional
+- Institucional
+- Limpia
+- Responsive
+- Fácil de utilizar
+- Adecuada para un colegio
+
+Debe existir un escudo/logo del colegio ubicado en:
+
+src/assets/escudo.png
+
+Utilizar el escudo en el login y en las partes importantes de la
+interfaz donde tenga sentido.
+
+Crear variables CSS para los colores institucionales en:
+
+src/styles/variables.css
+
+Y estilos globales en:
+
+src/styles/global.css
+
+No colocar todos los estilos dentro de los componentes.
+
+============================================================
+2. ESTRUCTURA DEL PROYECTO
+============================================================
+
+Utilizar una estructura similar a:
+
+src/
+├── assets/
+│   └── escudo.png
+│
+├── components/
+│   ├── common/
+│   ├── informes/
+│   ├── inventario/
+│   ├── layout/
+│   ├── prestamos/
+│   └── usuarios/
+│
+├── context/
+│   └── AuthContext.jsx
+│
+├── data/
+│   ├── instrumentos.js
+│   └── usuarios.js
+│
+├── pages/
+│   ├── admin/
+│   │   ├── AdminDashboard.jsx
+│   │   └── Inventario.jsx
+│   │
+│   ├── auth/
+│   │   └── Login.jsx
+│   │
+│   ├── estudiante/
+│   │   └── EstudianteDashboard.jsx
+│   │
+│   └── public/
+│
+├── services/
+│   ├── authService.js
+│   ├── instrumentService.js
+│   ├── prestamoService.js
+│   └── userService.js
+│
+└── styles/
+    ├── variables.css
+    ├── global.css
+    ├── login.css
+    ├── dashboard.css
+    └── inventario.css
+
+Mantener responsabilidades separadas.
+
+Los componentes visuales no deben contener innecesariamente toda
+la lógica de almacenamiento.
+
+============================================================
+3. AUTENTICACIÓN
+============================================================
+
+Crear un sistema de inicio de sesión con dos tipos de usuario:
+
+1. Administrador
+2. Estudiante
+
+Crear:
+
+src/context/AuthContext.jsx
+
+Debe permitir:
+
+- Iniciar sesión
+- Cerrar sesión
+- Saber qué usuario está autenticado
+- Saber el rol del usuario
+- Mantener la sesión mediante LocalStorage
+- Proteger las rutas
+
+Crear rutas protegidas.
+
+El administrador debe acceder a:
+
+/admin
+
+El estudiante debe acceder a:
+
+/estudiante
+
+Si un usuario no está autenticado debe ser enviado a:
+
+/login
+
+Si intenta entrar a una ruta que no corresponde a su rol,
+debe ser redirigido.
+
+============================================================
+4. LOGIN
+============================================================
+
+Crear una pantalla de login profesional.
+
+Debe contener:
+
+- Escudo del colegio
+- Nombre BandaControl
+- Usuario
+- Contraseña
+- Botón Iniciar sesión
+- Mensajes de error
+- Diseño responsive
+
+Debe utilizar los colores institucionales.
+
+============================================================
+5. DASHBOARD DEL ADMINISTRADOR
+============================================================
+
+Crear un Dashboard administrativo profesional.
+
+Debe tener:
+
+SIDEBAR:
+
+- Dashboard
+- Inventario
+- Préstamos
+- Mantenimiento
+- Usuarios
+- Configuración
+- Cerrar sesión
+
+HEADER:
+
+- Nombre del usuario
+- Rol
+- Menú responsive
+
+CONTENIDO:
+
+Tarjetas estadísticas:
+
+- Total instrumentos
+- Disponibles
+- Prestados
+- En mantenimiento
+
+Mostrar también:
+
+- Instrumentos recientes
+- Últimos préstamos
+- Información resumida del sistema
+
+MUY IMPORTANTE:
+
+Las estadísticas NO deben estar escritas manualmente.
+
+Deben obtenerse dinámicamente desde el inventario almacenado.
+
+Por ejemplo:
+
+Total = cantidad real de instrumentos.
+
+Disponibles = instrumentos cuyo estado sea "Disponible".
+
+Prestados = instrumentos cuyo estado sea "Prestado".
+
+Mantenimiento = instrumentos cuyo estado sea "Mantenimiento".
+
+============================================================
+6. CRUD DE INSTRUMENTOS
+============================================================
+
+Crear un módulo completo de inventario.
+
+Ruta:
+
+/admin/inventario
+
+Debe permitir:
+
+CREATE
+- Registrar instrumento
+
+READ
+- Mostrar instrumentos
+- Buscar instrumentos
+- Filtrar instrumentos
+
+UPDATE
+- Editar instrumento
+
+DELETE
+- Eliminar instrumento
+
+Los datos deben persistir mediante LocalStorage.
+
+Utilizar una única clave de almacenamiento:
+
+bandacontrol_instrumentos
+
+============================================================
+7. ESTRUCTURA DE UN INSTRUMENTO
+============================================================
+
+Cada instrumento debe manejar:
+
+{
+    id,
+    codigo,
+    nombre,
+    tipo,
+    marca,
+    modelo,
+    numeroSerie,
+    estado,
+    ubicacion,
+    observaciones,
+    fechaRegistro
+}
+
+Los estados permitidos deben ser:
+
+- Disponible
+- Prestado
+- Mantenimiento
+- Baja
+
+============================================================
+8. SERVICIO DE INSTRUMENTOS
+============================================================
+
+Crear:
+
+src/services/instrumentService.js
+
+Debe contener funciones como:
+
+- obtenerInstrumentos()
+- guardarInstrumentos()
+- agregarInstrumento()
+- actualizarInstrumento()
+- eliminarInstrumento()
+- obtenerInstrumentoPorId()
+- obtenerEstadisticas()
+- buscarInstrumentos()
+- filtrarPorEstado()
+
+El servicio debe ser la capa encargada de trabajar con
+LocalStorage.
+
+Evitar duplicar la lógica de almacenamiento en diferentes
+componentes.
+
+============================================================
+9. INVENTARIO
+============================================================
+
+La pantalla de inventario debe mostrar:
+
+- Código
+- Instrumento
+- Tipo
+- Marca
+- Número de serie
+- Estado
+- Ubicación
+- Acciones
+
+Debe incluir:
+
+- Buscador
+- Filtro por estado
+- Botón Nuevo instrumento
+- Botón Editar
+- Botón Eliminar
+- Estadísticas
+- Modal o formulario para crear/editar
+
+Cuando no existan instrumentos debe mostrar un mensaje amigable.
+
+============================================================
+10. SINCRONIZACIÓN DASHBOARD ↔ INVENTARIO
+============================================================
+
+Es MUY IMPORTANTE que el Dashboard y el Inventario trabajen
+con la misma fuente de datos.
+
+No crear dos LocalStorage diferentes para los instrumentos.
+
+Ambos deben utilizar:
+
+bandacontrol_instrumentos
+
+Cuando se agregue, edite o elimine un instrumento:
+
+- El inventario debe actualizarse.
+- El Dashboard debe poder obtener los nuevos datos.
+- Las estadísticas deben cambiar automáticamente al actualizar
+  la información.
+
+Se puede utilizar un evento personalizado de window para notificar
+cambios entre componentes si es necesario.
+
+============================================================
+11. ESTUDIANTE
+============================================================
+
+Crear un Dashboard para estudiantes.
+
+El estudiante NO debe tener permisos administrativos.
+
+Debe poder:
+
+- Consultar instrumentos disponibles
+- Consultar información de instrumentos
+- Solicitar préstamos
+
+No debe poder:
+
+- Eliminar instrumentos
+- Editar instrumentos
+- Administrar usuarios
+- Cambiar configuraciones administrativas
+
+============================================================
+12. PRÉSTAMOS
+============================================================
+
+Preparar la arquitectura para un módulo de préstamos.
+
+Crear:
+
+src/services/prestamoService.js
+
+Los préstamos deberán posteriormente manejar:
+
+- Instrumento
+- Estudiante
+- Fecha de préstamo
+- Fecha prevista de devolución
+- Fecha de devolución
+- Estado
+
+Estados:
+
+- Activo
+- Devuelto
+- Vencido
+
+Cuando se implemente el módulo:
+
+Al prestar un instrumento:
+
+Disponible → Prestado
+
+Al devolverlo:
+
+Prestado → Disponible
+
+============================================================
+13. MANTENIMIENTO
+============================================================
+
+Preparar un módulo para registrar:
+
+- Instrumento
+- Tipo de mantenimiento
+- Descripción
+- Fecha
+- Responsable
+- Estado
+- Observaciones
+
+Estados posibles:
+
+- Pendiente
+- En proceso
+- Finalizado
+
+============================================================
+14. USUARIOS
+============================================================
+
+Preparar CRUD de usuarios para administrador.
+
+Cada usuario puede tener:
+
+- id
+- nombre
+- usuario
+- contraseña
+- rol
+- estado
+
+Roles:
+
+- admin
+- estudiante
+
+El administrador podrá administrar usuarios.
+
+============================================================
+15. INFORMES
+============================================================
+
+Crear posteriormente un módulo de informes.
+
+Debe permitir consultar:
+
+- Total de instrumentos
+- Instrumentos disponibles
+- Instrumentos prestados
+- Instrumentos en mantenimiento
+- Instrumentos dados de baja
+- Préstamos activos
+- Historial de préstamos
+- Mantenimientos
+
+Preparar la arquitectura para poder exportar posteriormente
+informes a PDF o Excel.
+
+============================================================
+16. "QUIÉNES SOMOS"
+============================================================
+
+Crear una sección pública "Quiénes somos".
+
+Debe incluir:
+
+- Escudo del colegio
+- Fotografía institucional
+- Historia de la banda
+- Misión
+- Visión
+- Información de contacto
+
+La fotografía debe poder reemplazarse posteriormente fácilmente.
+
+============================================================
+17. RESPONSIVE
+============================================================
+
+La aplicación debe funcionar correctamente en:
+
+- Computador
+- Tablet
+- Teléfono
+
+El sidebar del administrador debe convertirse en menú móvil.
+
+Los formularios deben adaptarse a pantallas pequeñas.
+
+Las tablas deben poder desplazarse horizontalmente en dispositivos
+pequeños.
+
+============================================================
+18. CALIDAD DEL CÓDIGO
+============================================================
+
+Quiero código:
+
+- Limpio
+- Completo
+- Legible
+- Comentado solamente cuando sea necesario
+- Modular
+- Sin código duplicado
+- Sin funciones innecesarias
+- Sin datos falsos cuando exista una fuente real
+- Sin errores de imports
+- Sin archivos inexistentes
+
+No crear imports hacia archivos que no existen.
+
+Antes de entregar código, verificar que las rutas de importación
+coincidan exactamente con la estructura de carpetas.
+
+============================================================
+19. GIT
+============================================================
+
+El proyecto estará versionado con Git.
+
+Repositorio:
+
+https://github.com/Enpinave/Banda.git
+
+No incluir:
+
+- node_modules
+- dist
+- archivos .env
+- información sensible
+
+Crear un .gitignore apropiado para React + Vite.
+
+============================================================
+20. FORMA DE TRABAJO
+============================================================
+
+NO quiero que generes todo el proyecto de una sola vez si eso puede
+provocar errores.
+
+Trabajaremos por etapas.
+
+Primero:
+
+1. Crear estructura
+2. Configurar React/Vite
+3. Crear estilos institucionales
+4. Crear Login
+5. Crear AuthContext
+6. Crear Dashboard
+7. Crear CRUD de instrumentos
+8. Conectar Dashboard con Inventario
+9. Crear préstamos
+10. Crear usuarios
+11. Crear mantenimiento
+12. Crear informes
+13. Crear sección Quiénes somos
+14. Revisar responsive
+15. Revisar errores
+16. Preparar versión final
+
+En cada etapa:
+
+- Indicar qué archivos crear o modificar.
+- Entregar el código completo y limpio de cada archivo que se cambie.
+- No entregar fragmentos incompletos.
+- Indicar exactamente dónde guardar cada archivo.
+- Indicar los comandos de terminal cuando sean necesarios.
+- Verificar dependencias e imports.
+- No modificar archivos que no sean necesarios.
+- Mantener compatibilidad con lo construido anteriormente.
+
+Si detectas un problema en código anterior, primero explica cuál es
+el problema y después entrega la versión corregida completa.
+
+IMPORTANTE:
+
+No reemplazar la arquitectura existente sin explicarlo.
+
+Quiero construir BandaControl progresivamente y mantener cada etapa
+funcionando antes de pasar a la siguiente.
