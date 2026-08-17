@@ -5,77 +5,115 @@ import {
   Routes,
 } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import {
+  AuthProvider,
+  useAuth,
+} from "./context/AuthContext";
 
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Inventario from "./pages/admin/Inventario";
+import Prestamos from "./pages/admin/Prestamos";
+import Usuarios from "./pages/admin/Usuarios";
 import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
 
-/*
-|--------------------------------------------------------------------------
-| RUTA PROTEGIDA
-|--------------------------------------------------------------------------
-| Verifica:
-| 1. Que el sistema haya terminado de cargar.
-| 2. Que exista un usuario autenticado.
-| 3. Que tenga el rol requerido.
-*/
+
+// ============================================================
+// RUTA PROTEGIDA
+// ============================================================
+
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
 
-  // Mientras se verifica la sesión
+  // ----------------------------------------------------------
+  // CARGANDO SESIÓN
+  // ----------------------------------------------------------
+
   if (loading) {
     return (
       <div className="loading-screen">
+
         <div className="loading-spinner"></div>
 
-        <p>Cargando BandaControl...</p>
+        <p>
+          Cargando BandaControl...
+        </p>
+
       </div>
     );
   }
 
-  // Si no hay usuario, enviar al login
+  // ----------------------------------------------------------
+  // NO AUTENTICADO
+  // ----------------------------------------------------------
+
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
   }
 
-  // Si la ruta requiere un rol y el usuario no lo tiene
+  // ----------------------------------------------------------
+  // VALIDAR ROL
+  // ----------------------------------------------------------
+
   if (role && user.rol !== role) {
+
     if (user.rol === "admin") {
-      return <Navigate to="/admin" replace />;
+      return (
+        <Navigate
+          to="/admin"
+          replace
+        />
+      );
     }
 
     if (user.rol === "estudiante") {
-      return <Navigate to="/estudiante" replace />;
+      return (
+        <Navigate
+          to="/estudiante"
+          replace
+        />
+      );
     }
 
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
   }
 
   return children;
 }
 
-/*
-|--------------------------------------------------------------------------
-| RUTAS DE LA APLICACIÓN
-|--------------------------------------------------------------------------
-*/
+
+// ============================================================
+// RUTAS DE LA APLICACIÓN
+// ============================================================
+
 function AppRoutes() {
   return (
     <Routes>
 
-      {/* ============================================================
+      {/* ======================================================
           LOGIN
-      ============================================================ */}
+      ====================================================== */}
+
       <Route
         path="/login"
         element={<Login />}
       />
 
-      {/* ============================================================
+
+      {/* ======================================================
           PANEL ADMINISTRADOR
-      ============================================================ */}
+      ====================================================== */}
+
       <Route
         path="/admin"
         element={
@@ -85,9 +123,11 @@ function AppRoutes() {
         }
       />
 
-      {/* ============================================================
-          INVENTARIO
-      ============================================================ */}
+
+      {/* ======================================================
+          GESTIONAR INVENTARIO
+      ====================================================== */}
+
       <Route
         path="/admin/inventario"
         element={
@@ -97,9 +137,39 @@ function AppRoutes() {
         }
       />
 
-      {/* ============================================================
+
+      {/* ======================================================
+          GESTIONAR PRÉSTAMOS
+      ====================================================== */}
+
+      <Route
+        path="/admin/prestamos"
+        element={
+          <ProtectedRoute role="admin">
+            <Prestamos />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* ======================================================
+          GESTIONAR USUARIOS
+      ====================================================== */}
+
+      <Route
+        path="/admin/usuarios"
+        element={
+          <ProtectedRoute role="admin">
+            <Usuarios />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* ======================================================
           PANEL ESTUDIANTE
-      ============================================================ */}
+      ====================================================== */}
+
       <Route
         path="/estudiante"
         element={
@@ -109,9 +179,11 @@ function AppRoutes() {
         }
       />
 
-      {/* ============================================================
+
+      {/* ======================================================
           RUTA PRINCIPAL
-      ============================================================ */}
+      ====================================================== */}
+
       <Route
         path="/"
         element={
@@ -122,9 +194,11 @@ function AppRoutes() {
         }
       />
 
-      {/* ============================================================
+
+      {/* ======================================================
           RUTA NO ENCONTRADA
-      ============================================================ */}
+      ====================================================== */}
+
       <Route
         path="*"
         element={
@@ -139,11 +213,11 @@ function AppRoutes() {
   );
 }
 
-/*
-|--------------------------------------------------------------------------
-| APP PRINCIPAL
-|--------------------------------------------------------------------------
-*/
+
+// ============================================================
+// APLICACIÓN PRINCIPAL
+// ============================================================
+
 function App() {
   return (
     <AuthProvider>
@@ -157,5 +231,6 @@ function App() {
     </AuthProvider>
   );
 }
+
 
 export default App;

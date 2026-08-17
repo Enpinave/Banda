@@ -1,0 +1,2261 @@
+/* =========================================================
+   BANDA CONTROL
+   PRÉSTAMOS - ESTILOS
+   Basado en INVENTARIO
+   Colores institucionales:
+   Rojo | Azul | Blanco | Negro
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+  --loan-red: #c62828;
+  --loan-red-dark: #a51f1f;
+  --loan-red-light: #fdecec;
+
+  --loan-blue: #174ea6;
+  --loan-blue-dark: #123d82;
+  --loan-blue-light: #eaf1ff;
+
+  --loan-black: #111827;
+  --loan-gray-900: #1f2937;
+  --loan-gray-700: #374151;
+  --loan-gray-600: #4b5563;
+  --loan-gray-500: #6b7280;
+  --loan-gray-400: #9ca3af;
+  --loan-gray-300: #d1d5db;
+  --loan-gray-200: #e5e7eb;
+  --loan-gray-100: #f3f4f6;
+  --loan-gray-50: #f9fafb;
+
+  --loan-white: #ffffff;
+
+  --loan-green: #15803d;
+  --loan-green-light: #dcfce7;
+
+  --loan-orange: #c2410c;
+  --loan-orange-light: #ffedd5;
+
+  --loan-purple: #7c3aed;
+  --loan-purple-light: #ede9fe;
+
+  --loan-shadow-sm:
+    0 2px 8px rgba(0, 0, 0, 0.06);
+
+  --loan-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.08);
+
+  --loan-shadow-lg:
+    0 20px 50px rgba(0, 0, 0, 0.15);
+
+  --loan-radius: 12px;
+  --loan-radius-sm: 8px;
+
+  --loan-transition:
+    all 0.2s ease;
+}
+
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
+
+.prestamos-page {
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc 0%,
+      #eef3f9 100%
+    );
+
+  color: var(--loan-black);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  padding-bottom: 40px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.prestamos-header {
+  min-height: 90px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding:
+    20px
+    35px;
+
+  background:
+    var(--loan-white);
+
+  border-bottom:
+    1px solid
+    var(--loan-gray-200);
+
+  box-shadow:
+    var(--loan-shadow-sm);
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 50;
+}
+
+
+/* =========================================================
+   HEADER IZQUIERDO
+========================================================= */
+
+.prestamos-header-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   BOTÓN VOLVER
+========================================================= */
+
+.prestamos-header .back-button {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    var(--loan-gray-200);
+
+  border-radius: 9px;
+
+  background:
+    var(--loan-white);
+
+  color:
+    var(--loan-gray-700);
+
+  cursor: pointer;
+
+  transition:
+    var(--loan-transition);
+
+  flex-shrink: 0;
+}
+
+.prestamos-header .back-button:hover {
+  background:
+    var(--loan-blue-light);
+
+  border-color:
+    var(--loan-blue);
+
+  color:
+    var(--loan-blue);
+
+  transform:
+    translateX(-2px);
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.prestamos-header h1 {
+  margin: 0;
+
+  color:
+    var(--loan-black);
+
+  font-size: 1.65rem;
+
+  font-weight: 800;
+
+  letter-spacing: -0.4px;
+}
+
+.prestamos-header p {
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   BOTÓN PRINCIPAL
+========================================================= */
+
+.prestamos-page .primary-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 42px;
+
+  padding:
+    10px
+    17px;
+
+  border: none;
+
+  border-radius:
+    var(--loan-radius-sm);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--loan-red),
+      var(--loan-red-dark)
+    );
+
+  color:
+    var(--loan-white);
+
+  font-size: 0.88rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 12px
+    rgba(198, 40, 40, 0.22);
+
+  transition:
+    var(--loan-transition);
+}
+
+.prestamos-page .primary-button:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #d32f2f,
+      #a51f1f
+    );
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 7px 16px
+    rgba(198, 40, 40, 0.3);
+}
+
+.prestamos-page .primary-button:active {
+  transform:
+    translateY(0);
+}
+
+.prestamos-page .primary-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   BOTÓN SECUNDARIO
+========================================================= */
+
+.prestamos-page .secondary-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding:
+    10px
+    18px;
+
+  border:
+    1px solid
+    var(--loan-gray-300);
+
+  border-radius:
+    var(--loan-radius-sm);
+
+  background:
+    var(--loan-white);
+
+  color:
+    var(--loan-gray-700);
+
+  font-size: 0.88rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    var(--loan-transition);
+}
+
+.prestamos-page .secondary-button:hover {
+  background:
+    var(--loan-gray-100);
+
+  border-color:
+    var(--loan-gray-400);
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS
+========================================================= */
+
+.prestamos-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  padding:
+    28px
+    35px
+    0;
+}
+
+
+/* =========================================================
+   TARJETA ESTADÍSTICA
+========================================================= */
+
+.loan-stat-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  min-height: 105px;
+
+  padding: 20px;
+
+  background:
+    var(--loan-white);
+
+  border:
+    1px solid
+    var(--loan-gray-200);
+
+  border-radius:
+    var(--loan-radius);
+
+  box-shadow:
+    var(--loan-shadow-sm);
+
+  transition:
+    var(--loan-transition);
+}
+
+.loan-stat-card:hover {
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    var(--loan-shadow);
+}
+
+
+/* =========================================================
+   ICONOS ESTADÍSTICAS
+========================================================= */
+
+.loan-stat-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 11px;
+
+  flex-shrink: 0;
+}
+
+.loan-stat-icon.blue {
+  background:
+    var(--loan-blue-light);
+
+  color:
+    var(--loan-blue);
+}
+
+.loan-stat-icon.green {
+  background:
+    var(--loan-green-light);
+
+  color:
+    var(--loan-green);
+}
+
+.loan-stat-icon.orange {
+  background:
+    var(--loan-orange-light);
+
+  color:
+    var(--loan-orange);
+}
+
+.loan-stat-icon.purple {
+  background:
+    var(--loan-purple-light);
+
+  color:
+    var(--loan-purple);
+}
+
+
+/* =========================================================
+   TEXTO ESTADÍSTICAS
+========================================================= */
+
+.loan-stat-card span {
+  display: block;
+
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.82rem;
+
+  font-weight: 600;
+}
+
+.loan-stat-card strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color:
+    var(--loan-black);
+
+  font-size: 1.65rem;
+
+  line-height: 1;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.prestamos-content {
+  padding:
+    25px
+    35px
+    0;
+}
+
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+.prestamos-panel {
+  overflow: hidden;
+
+  background:
+    var(--loan-white);
+
+  border:
+    1px solid
+    var(--loan-gray-200);
+
+  border-radius:
+    var(--loan-radius);
+
+  box-shadow:
+    var(--loan-shadow-sm);
+}
+
+
+/* =========================================================
+   HEADER DEL PANEL
+========================================================= */
+
+.prestamos-panel-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding:
+    20px;
+
+  border-bottom:
+    1px solid
+    var(--loan-gray-200);
+}
+
+.prestamos-panel-header h2 {
+  margin: 0;
+
+  color:
+    var(--loan-black);
+
+  font-size: 1.05rem;
+
+  font-weight: 800;
+}
+
+.prestamos-panel-header p {
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   BOTÓN ACTUALIZAR
+========================================================= */
+
+.refresh-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 38px;
+
+  padding:
+    8px
+    13px;
+
+  border:
+    1px solid
+    var(--loan-gray-300);
+
+  border-radius:
+    var(--loan-radius-sm);
+
+  background:
+    var(--loan-white);
+
+  color:
+    var(--loan-gray-700);
+
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    var(--loan-transition);
+}
+
+.refresh-button:hover {
+  background:
+    var(--loan-blue-light);
+
+  border-color:
+    var(--loan-blue);
+
+  color:
+    var(--loan-blue);
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.prestamos-toolbar {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding:
+    20px;
+
+  border-bottom:
+    1px solid
+    var(--loan-gray-200);
+}
+
+
+/* =========================================================
+   BUSCADOR
+========================================================= */
+
+.prestamos-toolbar .search-box {
+  width: 100%;
+
+  max-width: 450px;
+
+  min-height: 43px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    0
+    13px;
+
+  background:
+    var(--loan-gray-50);
+
+  border:
+    1px solid
+    var(--loan-gray-300);
+
+  border-radius: 9px;
+
+  color:
+    var(--loan-gray-500);
+
+  transition:
+    var(--loan-transition);
+}
+
+.prestamos-toolbar .search-box:focus-within {
+  background:
+    var(--loan-white);
+
+  border-color:
+    var(--loan-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(23, 78, 166, 0.1);
+}
+
+.prestamos-toolbar .search-box input {
+  width: 100%;
+
+  height: 41px;
+
+  border: none;
+
+  outline: none;
+
+  background:
+    transparent;
+
+  color:
+    var(--loan-gray-900);
+
+  font-size: 0.88rem;
+}
+
+.prestamos-toolbar .search-box input::placeholder {
+  color:
+    var(--loan-gray-400);
+}
+
+
+/* =========================================================
+   LIMPIAR BÚSQUEDA
+========================================================= */
+
+.clear-search {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background:
+    var(--loan-gray-200);
+
+  color:
+    var(--loan-gray-600);
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition:
+    var(--loan-transition);
+}
+
+.clear-search:hover {
+  background:
+    var(--loan-red-light);
+
+  color:
+    var(--loan-red);
+}
+
+
+/* =========================================================
+   SELECT FILTRO
+========================================================= */
+
+.prestamos-toolbar .filter-select {
+  min-width: 190px;
+
+  height: 43px;
+
+  padding:
+    0
+    12px;
+
+  border:
+    1px solid
+    var(--loan-gray-300);
+
+  border-radius: 9px;
+
+  background:
+    var(--loan-white);
+
+  color:
+    var(--loan-gray-700);
+
+  font-size: 0.86rem;
+
+  font-weight: 600;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    var(--loan-transition);
+}
+
+.prestamos-toolbar .filter-select:focus {
+  border-color:
+    var(--loan-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(23, 78, 166, 0.1);
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+.table-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.prestamos-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 1050px;
+}
+
+
+/* =========================================================
+   CABECERA TABLA
+========================================================= */
+
+.prestamos-table thead {
+  background:
+    var(--loan-gray-50);
+}
+
+.prestamos-table th {
+  padding:
+    14px
+    16px;
+
+  text-align: left;
+
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.72rem;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.4px;
+
+  border-bottom:
+    1px solid
+    var(--loan-gray-200);
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   CELDAS
+========================================================= */
+
+.prestamos-table td {
+  padding:
+    15px
+    16px;
+
+  color:
+    var(--loan-gray-600);
+
+  font-size: 0.84rem;
+
+  border-bottom:
+    1px solid
+    var(--loan-gray-100);
+
+  vertical-align: middle;
+}
+
+.prestamos-table tbody tr {
+  transition:
+    background 0.15s ease;
+}
+
+.prestamos-table tbody tr:hover {
+  background:
+    #f8fbff;
+}
+
+.prestamos-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   INSTRUMENTO
+========================================================= */
+
+.loan-instrument {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 200px;
+}
+
+.loan-instrument > div:last-child {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.loan-instrument strong {
+  color:
+    var(--loan-gray-900);
+
+  font-size: 0.86rem;
+}
+
+.loan-instrument small {
+  color:
+    var(--loan-gray-400);
+
+  font-size: 0.73rem;
+}
+
+
+/* =========================================================
+   ICONO INSTRUMENTO
+========================================================= */
+
+.loan-instrument-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background:
+    var(--loan-gray-100);
+
+  color:
+    var(--loan-blue);
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   ESTUDIANTE
+========================================================= */
+
+.loan-student {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  min-width: 160px;
+}
+
+.loan-student strong {
+  color:
+    var(--loan-gray-900);
+
+  font-size: 0.84rem;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ICONO USUARIO
+========================================================= */
+
+.loan-user-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    var(--loan-blue-light);
+
+  color:
+    var(--loan-blue);
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   FECHAS
+========================================================= */
+
+.date-value {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    var(--loan-gray-600);
+
+  font-size: 0.8rem;
+
+  white-space: nowrap;
+}
+
+.date-value svg {
+  color:
+    var(--loan-gray-400);
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.loan-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 88px;
+
+  padding:
+    5px
+    9px;
+
+  border-radius: 999px;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+
+/* ACTIVO */
+
+.loan-status.loan-active {
+  background:
+    var(--loan-blue-light);
+
+  color:
+    var(--loan-blue);
+}
+
+
+/* VENCIDO */
+
+.loan-status.loan-overdue {
+  background:
+    var(--loan-orange-light);
+
+  color:
+    var(--loan-orange);
+}
+
+
+/* DEVUELTO */
+
+.loan-status.loan-returned {
+  background:
+    var(--loan-green-light);
+
+  color:
+    var(--loan-green);
+}
+
+
+/* OTROS */
+
+.loan-status.loan-default {
+  background:
+    var(--loan-gray-200);
+
+  color:
+    var(--loan-gray-600);
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.table-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.action-button {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border:
+    1px solid
+    var(--loan-gray-200);
+
+  border-radius: 7px;
+
+  background:
+    var(--loan-white);
+
+  cursor: pointer;
+
+  transition:
+    var(--loan-transition);
+}
+
+
+/* DEVOLVER */
+
+.action-button.return {
+  color:
+    var(--loan-green);
+}
+
+.action-button.return:hover {
+  background:
+    var(--loan-green-light);
+
+  border-color:
+    #a7e3ba;
+}
+
+
+/* ELIMINAR */
+
+.action-button.delete {
+  color:
+    var(--loan-red);
+}
+
+.action-button.delete:hover {
+  background:
+    var(--loan-red-light);
+
+  border-color:
+    #f4b5b5;
+}
+
+
+/* =========================================================
+   FOOTER TABLA
+========================================================= */
+
+.table-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding:
+    14px
+    20px;
+
+  border-top:
+    1px solid
+    var(--loan-gray-200);
+
+  background:
+    var(--loan-gray-50);
+
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.78rem;
+}
+
+.table-footer strong {
+  color:
+    var(--loan-gray-900);
+}
+
+
+/* =========================================================
+   TABLA VACÍA
+========================================================= */
+
+.empty-table {
+  height: 300px;
+
+  text-align: center !important;
+
+  vertical-align: middle !important;
+
+  color:
+    var(--loan-gray-400) !important;
+}
+
+.empty-table > * {
+  display: block;
+
+  margin-left: auto;
+
+  margin-right: auto;
+}
+
+.empty-table svg {
+  margin-bottom: 12px;
+
+  color:
+    var(--loan-blue);
+}
+
+.empty-table strong {
+  margin-bottom: 6px;
+
+  color:
+    var(--loan-gray-700);
+
+  font-size: 0.95rem;
+}
+
+.empty-table span {
+  max-width: 400px;
+
+  margin-bottom: 16px;
+
+  color:
+    var(--loan-gray-400);
+
+  font-size: 0.78rem;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(17, 24, 39, 0.62);
+
+  backdrop-filter:
+    blur(4px);
+
+  animation:
+    modalFadeIn
+    0.2s
+    ease;
+}
+
+
+/* =========================================================
+   MODAL PRÉSTAMO
+========================================================= */
+
+.prestamo-modal {
+  width: 100%;
+
+  max-width: 780px;
+
+  max-height:
+    calc(100vh - 40px);
+
+  overflow-y: auto;
+
+  background:
+    var(--loan-white);
+
+  border-radius:
+    15px;
+
+  box-shadow:
+    var(--loan-shadow-lg);
+
+  animation:
+    modalSlideIn
+    0.25s
+    ease;
+}
+
+
+/* MODAL PEQUEÑO */
+
+.prestamo-modal.small-modal {
+  max-width: 620px;
+}
+
+
+/* =========================================================
+   HEADER MODAL
+========================================================= */
+
+.modal-header {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding:
+    24px
+    26px;
+
+  border-bottom:
+    1px solid
+    var(--loan-gray-200);
+}
+
+
+/* CONTENEDOR IZQUIERDO */
+
+.modal-header > div:first-child {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+}
+
+
+/* =========================================================
+   ICONO MODAL
+========================================================= */
+
+.modal-title-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background:
+    var(--loan-blue-light);
+
+  color:
+    var(--loan-blue);
+
+  flex-shrink: 0;
+}
+
+.modal-title-icon.return-icon {
+  background:
+    var(--loan-green-light);
+
+  color:
+    var(--loan-green);
+}
+
+
+/* =========================================================
+   TÍTULO MODAL
+========================================================= */
+
+.modal-header h2 {
+  margin: 0;
+
+  color:
+    var(--loan-black);
+
+  font-size: 1.25rem;
+
+  font-weight: 800;
+}
+
+.modal-header p {
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.8rem;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   CERRAR MODAL
+========================================================= */
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background:
+    var(--loan-gray-100);
+
+  color:
+    var(--loan-gray-600);
+
+  cursor: pointer;
+
+  transition:
+    var(--loan-transition);
+
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background:
+    var(--loan-red-light);
+
+  color:
+    var(--loan-red);
+}
+
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.prestamo-form {
+  padding:
+    24px
+    26px;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap:
+    18px;
+}
+
+
+/* =========================================================
+   GRUPO
+========================================================= */
+
+.prestamo-modal .form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.prestamo-modal .form-group.full-width {
+  grid-column: 1 / -1;
+
+  margin-top: 0;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.prestamo-modal .form-group label {
+  color:
+    var(--loan-gray-700);
+
+  font-size: 0.78rem;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.prestamo-modal .form-group input,
+.prestamo-modal .form-group select,
+.prestamo-modal .form-group textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid
+    var(--loan-gray-300);
+
+  border-radius: 8px;
+
+  background:
+    var(--loan-white);
+
+  color:
+    var(--loan-gray-900);
+
+  font-family: inherit;
+
+  font-size: 0.86rem;
+
+  outline: none;
+
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.prestamo-modal .form-group input,
+.prestamo-modal .form-group select {
+  height: 43px;
+
+  padding:
+    0
+    12px;
+}
+
+.prestamo-modal .form-group textarea {
+  min-height: 100px;
+
+  padding:
+    11px
+    12px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.prestamo-modal .form-group input:focus,
+.prestamo-modal .form-group select:focus,
+.prestamo-modal .form-group textarea:focus {
+  border-color:
+    var(--loan-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(23, 78, 166, 0.1);
+
+  background:
+    #fcfdff;
+}
+
+
+/* =========================================================
+   AYUDA FORMULARIO
+========================================================= */
+
+.form-help {
+  font-size: 0.72rem;
+
+  line-height: 1.4;
+}
+
+.error-text {
+  color:
+    var(--loan-red);
+}
+
+
+/* =========================================================
+   RESUMEN DEVOLUCIÓN
+========================================================= */
+
+.return-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+
+  margin:
+    24px
+    26px;
+
+  padding:
+    18px;
+
+  background:
+    var(--loan-gray-50);
+
+  border:
+    1px solid
+    var(--loan-gray-200);
+
+  border-radius:
+    var(--loan-radius-sm);
+}
+
+.return-summary > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.return-summary span {
+  color:
+    var(--loan-gray-500);
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.return-summary strong {
+  color:
+    var(--loan-gray-900);
+
+  font-size: 0.88rem;
+}
+
+.return-summary small {
+  color:
+    var(--loan-gray-400);
+
+  font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   TEXTAREA DEVOLUCIÓN
+========================================================= */
+
+.prestamo-modal.small-modal > .form-group {
+  margin:
+    0
+    26px;
+}
+
+.prestamo-modal.small-modal > .form-group textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  min-height: 100px;
+
+  padding:
+    11px
+    12px;
+
+  border:
+    1px solid
+    var(--loan-gray-300);
+
+  border-radius: 8px;
+
+  background:
+    var(--loan-white);
+
+  color:
+    var(--loan-gray-900);
+
+  font-family: inherit;
+
+  font-size: 0.86rem;
+
+  resize: vertical;
+
+  outline: none;
+}
+
+.prestamo-modal.small-modal > .form-group textarea:focus {
+  border-color:
+    var(--loan-blue);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(23, 78, 166, 0.1);
+}
+
+
+/* =========================================================
+   ACCIONES MODAL
+========================================================= */
+
+.modal-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 25px;
+
+  padding-top: 20px;
+
+  border-top:
+    1px solid
+    var(--loan-gray-200);
+}
+
+.prestamo-modal.small-modal .modal-actions {
+  margin:
+    0
+    26px;
+
+  padding-top:
+    20px;
+}
+
+
+/* =========================================================
+   BOTÓN ÉXITO
+========================================================= */
+
+.success-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 42px;
+
+  padding:
+    10px
+    17px;
+
+  border: none;
+
+  border-radius:
+    var(--loan-radius-sm);
+
+  background:
+    var(--loan-green);
+
+  color:
+    var(--loan-white);
+
+  font-size: 0.88rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 12px
+    rgba(21, 128, 61, 0.22);
+
+  transition:
+    var(--loan-transition);
+}
+
+.success-button:hover {
+  background:
+    #166534;
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 7px 16px
+    rgba(21, 128, 61, 0.3);
+}
+
+.success-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+@keyframes modalFadeIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes modalSlideIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(20px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+/* =========================================================
+   SPIN
+========================================================= */
+
+.spin {
+  animation:
+    spinAnimation
+    1s
+    linear
+    infinite;
+}
+
+@keyframes spinAnimation {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.prestamo-modal::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  width: 7px;
+
+  height: 7px;
+}
+
+.prestamo-modal::-webkit-scrollbar-track,
+.table-container::-webkit-scrollbar-track {
+  background:
+    var(--loan-gray-100);
+}
+
+.prestamo-modal::-webkit-scrollbar-thumb,
+.table-container::-webkit-scrollbar-thumb {
+  background:
+    var(--loan-gray-300);
+
+  border-radius: 20px;
+}
+
+.prestamo-modal::-webkit-scrollbar-thumb:hover,
+.table-container::-webkit-scrollbar-thumb:hover {
+  background:
+    var(--loan-gray-400);
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .prestamos-header {
+    padding:
+      18px
+      24px;
+  }
+
+  .prestamos-content {
+    padding:
+      22px
+      24px
+      0;
+  }
+
+  .prestamos-stats {
+    padding:
+      24px
+      24px
+      0;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET PEQUEÑA
+========================================================= */
+
+@media (max-width: 720px) {
+
+  .prestamos-header {
+    position: relative;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    padding:
+      18px;
+  }
+
+  .prestamos-header-left {
+    width: 100%;
+  }
+
+  .prestamos-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .prestamos-header p {
+    font-size: 0.8rem;
+  }
+
+  .prestamos-header > .primary-button {
+    width: 100%;
+  }
+
+  .prestamos-stats {
+    padding:
+      18px;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+  }
+
+  .loan-stat-card {
+    min-height: 90px;
+
+    padding:
+      15px;
+  }
+
+  .loan-stat-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .loan-stat-card strong {
+    font-size: 1.4rem;
+  }
+
+  .prestamos-content {
+    padding:
+      18px
+      18px
+      0;
+  }
+
+  .prestamos-panel-header {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .refresh-button {
+    width: 100%;
+  }
+
+  .prestamos-toolbar {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    padding:
+      15px;
+  }
+
+  .prestamos-toolbar .search-box {
+    max-width: none;
+  }
+
+  .prestamos-toolbar .filter-select {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - CELULAR
+========================================================= */
+
+@media (max-width: 500px) {
+
+  .prestamos-header {
+    padding:
+      15px;
+  }
+
+  .prestamos-header-left {
+    gap:
+      10px;
+  }
+
+  .prestamos-header .back-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .prestamos-header h1 {
+    font-size:
+      1.15rem;
+  }
+
+  .prestamos-header p {
+    font-size:
+      0.75rem;
+  }
+
+  .prestamos-stats {
+    grid-template-columns:
+      1fr;
+
+    padding:
+      15px;
+  }
+
+  .loan-stat-card {
+    min-height:
+      82px;
+  }
+
+  .prestamos-content {
+    padding:
+      15px
+      15px
+      0;
+  }
+
+  .prestamos-panel {
+    border-radius:
+      9px;
+  }
+
+  .prestamos-panel-header {
+    padding:
+      15px;
+  }
+
+  .prestamos-toolbar {
+    padding:
+      12px;
+  }
+
+  .prestamos-toolbar .search-box {
+    min-height:
+      40px;
+  }
+
+  .prestamos-toolbar .filter-select {
+    height:
+      40px;
+  }
+
+  .modal-overlay {
+    padding:
+      10px;
+  }
+
+  .prestamo-modal {
+    max-height:
+      calc(100vh - 20px);
+
+    border-radius:
+      12px;
+  }
+
+  .modal-header {
+    padding:
+      18px;
+  }
+
+  .modal-header h2 {
+    font-size:
+      1.05rem;
+  }
+
+  .prestamo-form {
+    padding:
+      18px;
+  }
+
+  .form-grid {
+    grid-template-columns:
+      1fr;
+
+    gap:
+      15px;
+  }
+
+  .prestamo-modal .form-group.full-width {
+    grid-column:
+      auto;
+  }
+
+  .return-summary {
+    grid-template-columns:
+      1fr;
+
+    margin:
+      18px;
+
+    padding:
+      15px;
+  }
+
+  .prestamo-modal.small-modal > .form-group {
+    margin:
+      0
+      18px;
+  }
+
+  .modal-actions {
+    flex-direction:
+      column-reverse;
+
+    align-items:
+      stretch;
+  }
+
+  .modal-actions button {
+    width:
+      100%;
+  }
+
+  .prestamo-modal.small-modal .modal-actions {
+    margin:
+      0
+      18px;
+  }
+
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+.prestamos-page button:focus-visible,
+.prestamos-page input:focus-visible,
+.prestamos-page select:focus-visible,
+.prestamos-page textarea:focus-visible {
+  outline:
+    3px solid
+    rgba(23, 78, 166, 0.25);
+
+  outline-offset:
+    2px;
+}
+
+
+/* =========================================================
+   REDUCCIÓN DE ANIMACIONES
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .prestamos-page *,
+  .prestamos-page *::before,
+  .prestamos-page *::after {
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
+
+  }
+
+}

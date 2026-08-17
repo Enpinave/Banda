@@ -15,11 +15,10 @@ import { useNavigate } from "react-router-dom";
 
 import {
   obtenerInstrumentos,
-  agregarInstrumento,
+  crearInstrumento,
   actualizarInstrumento,
   eliminarInstrumento as eliminarInstrumentoService,
 } from "../../services/instrumentosService";
-
 
 // ============================================================
 // FORMULARIO INICIAL
@@ -27,22 +26,21 @@ import {
 
 const instrumentoInicial = {
   codigo: "",
-  instrumento: "",
+  nombre: "",
   tipo: "",
   marca: "",
-  serie: "",
+  modelo: "",
+  numero_serie: "",
   estado: "Disponible",
   ubicacion: "",
   observaciones: "",
 };
-
 
 // ============================================================
 // COMPONENTE
 // ============================================================
 
 function Inventario() {
-
   const navigate = useNavigate();
 
   // ==========================================================
@@ -53,85 +51,62 @@ function Inventario() {
 
   const [busqueda, setBusqueda] = useState("");
 
-  const [filtroEstado, setFiltroEstado] =
-    useState("Todos");
+  const [filtroEstado, setFiltroEstado] = useState("Todos");
 
-  const [modalAbierto, setModalAbierto] =
-    useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
 
-  const [modoEdicion, setModoEdicion] =
-    useState(false);
+  const [modoEdicion, setModoEdicion] = useState(false);
 
   const [instrumentoActual, setInstrumentoActual] =
     useState(instrumentoInicial);
 
+  const [cargando, setCargando] = useState(false);
+
+  const [guardando, setGuardando] = useState(false);
 
   // ==========================================================
   // CARGAR INSTRUMENTOS
   // ==========================================================
 
-  const cargarInstrumentos = () => {
+  const cargarInstrumentos = async () => {
+    try {
+      setCargando(true);
 
-    const datos = obtenerInstrumentos();
+      const datos = await obtenerInstrumentos();
 
-    setInstrumentos(datos);
+      setInstrumentos(
+        Array.isArray(datos) ? datos : []
+      );
+    } catch (error) {
+      console.error(
+        "Error al cargar instrumentos:",
+        error
+      );
+
+      setInstrumentos([]);
+
+      alert(
+        error.message ||
+          "No se pudieron cargar los instrumentos."
+      );
+    } finally {
+      setCargando(false);
+    }
   };
-
 
   // ==========================================================
   // CARGA INICIAL
   // ==========================================================
 
   useEffect(() => {
-
     cargarInstrumentos();
-
   }, []);
-
-
-  // ==========================================================
-  // ESCUCHAR CAMBIOS DEL INVENTARIO
-  // ==========================================================
-
-  useEffect(() => {
-
-    const actualizar = () => {
-      cargarInstrumentos();
-    };
-
-    window.addEventListener(
-      "instrumentosActualizados",
-      actualizar
-    );
-
-    window.addEventListener(
-      "storage",
-      actualizar
-    );
-
-    return () => {
-
-      window.removeEventListener(
-        "instrumentosActualizados",
-        actualizar
-      );
-
-      window.removeEventListener(
-        "storage",
-        actualizar
-      );
-
-    };
-
-  }, []);
-
 
   // ==========================================================
   // ABRIR NUEVO
   // ==========================================================
 
   const abrirNuevoInstrumento = () => {
-
     setInstrumentoActual({
       ...instrumentoInicial,
     });
@@ -141,15 +116,23 @@ function Inventario() {
     setModalAbierto(true);
   };
 
-
   // ==========================================================
   // EDITAR
   // ==========================================================
 
   const editarInstrumento = (instrumento) => {
-
     setInstrumentoActual({
-      ...instrumento,
+      id: instrumento.id,
+      codigo: instrumento.codigo || "",
+      nombre: instrumento.nombre || "",
+      tipo: instrumento.tipo || "",
+      marca: instrumento.marca || "",
+      modelo: instrumento.modelo || "",
+      numero_serie: instrumento.numero_serie || "",
+      estado: instrumento.estado || "Disponible",
+      ubicacion: instrumento.ubicacion || "",
+      observaciones:
+        instrumento.observaciones || "",
     });
 
     setModoEdicion(true);
@@ -157,12 +140,14 @@ function Inventario() {
     setModalAbierto(true);
   };
 
-
   // ==========================================================
   // CERRAR MODAL
   // ==========================================================
 
   const cerrarModal = () => {
+    if (guardando) {
+      return;
+    }
 
     setModalAbierto(false);
 
@@ -173,13 +158,11 @@ function Inventario() {
     });
   };
 
-
   // ==========================================================
   // CAMBIAR INPUT
   // ==========================================================
 
   const manejarCambio = (event) => {
-
     const { name, value } = event.target;
 
     setInstrumentoActual((anterior) => ({
@@ -188,15 +171,12 @@ function Inventario() {
     }));
   };
 
-
   // ==========================================================
   // VALIDAR FORMULARIO
   // ==========================================================
 
   const validarFormulario = () => {
-
     if (!instrumentoActual.codigo.trim()) {
-
       alert(
         "Por favor ingresa el código del instrumento."
       );
@@ -204,8 +184,7 @@ function Inventario() {
       return false;
     }
 
-    if (!instrumentoActual.instrumento.trim()) {
-
+    if (!instrumentoActual.nombre.trim()) {
       alert(
         "Por favor ingresa el nombre del instrumento."
       );
@@ -214,7 +193,6 @@ function Inventario() {
     }
 
     if (!instrumentoActual.tipo.trim()) {
-
       alert(
         "Por favor selecciona el tipo de instrumento."
       );
@@ -225,59 +203,72 @@ function Inventario() {
     return true;
   };
 
-
   // ==========================================================
   // GUARDAR
   // ==========================================================
 
-  const guardarInstrumento = (event) => {
-
+  const guardarInstrumento = async (event) => {
     event.preventDefault();
 
     if (!validarFormulario()) {
       return;
     }
 
+    try {
+      setGuardando(true);
 
-    // ========================================================
-    // EDITAR
-    // ========================================================
+      // ======================================================
+      // EDITAR
+      // ======================================================
 
-    if (modoEdicion) {
+      if (modoEdicion) {
+        await actualizarInstrumento(
+          instrumentoActual.id,
+          instrumentoActual
+        );
 
-      actualizarInstrumento(
-        instrumentoActual.id,
-        instrumentoActual
-      );
+        alert(
+          "Instrumento actualizado correctamente."
+        );
+      }
 
-      cargarInstrumentos();
+      // ======================================================
+      // CREAR
+      // ======================================================
+
+      else {
+        await crearInstrumento(
+          instrumentoActual
+        );
+
+        alert(
+          "Instrumento registrado correctamente."
+        );
+      }
+
+      await cargarInstrumentos();
 
       cerrarModal();
+    } catch (error) {
+      console.error(
+        "Error al guardar instrumento:",
+        error
+      );
 
-      return;
+      alert(
+        error.message ||
+          "No se pudo guardar el instrumento."
+      );
+    } finally {
+      setGuardando(false);
     }
-
-
-    // ========================================================
-    // CREAR
-    // ========================================================
-
-    agregarInstrumento(
-      instrumentoActual
-    );
-
-    cargarInstrumentos();
-
-    cerrarModal();
   };
-
 
   // ==========================================================
   // ELIMINAR
   // ==========================================================
 
-  const eliminarInstrumento = (id) => {
-
+  const eliminarInstrumento = async (id) => {
     const confirmar = window.confirm(
       "¿Estás seguro de eliminar este instrumento?"
     );
@@ -286,55 +277,59 @@ function Inventario() {
       return;
     }
 
-    eliminarInstrumentoService(id);
+    try {
+      await eliminarInstrumentoService(id);
 
-    cargarInstrumentos();
+      await cargarInstrumentos();
+
+      alert(
+        "Instrumento eliminado correctamente."
+      );
+    } catch (error) {
+      console.error(
+        "Error al eliminar instrumento:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "No se pudo eliminar el instrumento."
+      );
+    }
   };
-
 
   // ==========================================================
   // FILTRAR
   // ==========================================================
 
   const instrumentosFiltrados = useMemo(() => {
-
-    const texto =
-      busqueda
-        .trim()
-        .toLowerCase();
+    const texto = busqueda
+      .trim()
+      .toLowerCase();
 
     return instrumentos.filter(
       (instrumento) => {
-
         const coincideBusqueda =
           !texto ||
-
           instrumento.codigo
             ?.toLowerCase()
             .includes(texto) ||
-
-          instrumento.instrumento
+          instrumento.nombre
             ?.toLowerCase()
             .includes(texto) ||
-
           instrumento.marca
             ?.toLowerCase()
             .includes(texto) ||
-
           instrumento.tipo
             ?.toLowerCase()
             .includes(texto) ||
-
-          instrumento.serie
+          instrumento.numero_serie
             ?.toLowerCase()
             .includes(texto);
 
-
         const coincideEstado =
           filtroEstado === "Todos" ||
-          instrumento.estado ===
-            filtroEstado;
-
+          instrumento.estado === filtroEstado;
 
         return (
           coincideBusqueda &&
@@ -342,65 +337,51 @@ function Inventario() {
         );
       }
     );
-
   }, [
     instrumentos,
     busqueda,
     filtroEstado,
   ]);
 
-
   // ==========================================================
   // ESTADÍSTICAS
   // ==========================================================
 
   const estadisticas = useMemo(() => {
-
     return {
+      total: instrumentos.length,
 
-      total:
-        instrumentos.length,
+      disponibles: instrumentos.filter(
+        (instrumento) =>
+          instrumento.estado ===
+          "Disponible"
+      ).length,
 
-      disponibles:
-        instrumentos.filter(
-          (instrumento) =>
-            instrumento.estado ===
-            "Disponible"
-        ).length,
+      prestados: instrumentos.filter(
+        (instrumento) =>
+          instrumento.estado ===
+          "Prestado"
+      ).length,
 
-      prestados:
-        instrumentos.filter(
-          (instrumento) =>
-            instrumento.estado ===
-            "Prestado"
-        ).length,
+      mantenimiento: instrumentos.filter(
+        (instrumento) =>
+          instrumento.estado ===
+          "Mantenimiento"
+      ).length,
 
-      mantenimiento:
-        instrumentos.filter(
-          (instrumento) =>
-            instrumento.estado ===
-            "Mantenimiento"
-        ).length,
-
-      baja:
-        instrumentos.filter(
-          (instrumento) =>
-            instrumento.estado ===
-            "Baja"
-        ).length,
+      baja: instrumentos.filter(
+        (instrumento) =>
+          instrumento.estado === "Baja"
+      ).length,
     };
-
   }, [instrumentos]);
-
 
   // ==========================================================
   // CLASE ESTADO
   // ==========================================================
 
   const obtenerClaseEstado = (estado) => {
-
     switch (estado) {
-
       case "Disponible":
         return "available";
 
@@ -418,15 +399,12 @@ function Inventario() {
     }
   };
 
-
   // ==========================================================
   // RENDER
   // ==========================================================
 
   return (
-
     <div className="inventario-page">
-
 
       {/* ====================================================
           HEADER
@@ -442,13 +420,12 @@ function Inventario() {
               navigate("/admin")
             }
             title="Volver al Dashboard"
+            type="button"
           >
             <ArrowLeft size={20} />
           </button>
 
-
           <div>
-
             <h1>
               Inventario de instrumentos
             </h1>
@@ -457,29 +434,25 @@ function Inventario() {
               Administración de los instrumentos
               de la banda
             </p>
-
           </div>
 
         </div>
-
 
         <button
           className="primary-button"
           onClick={
             abrirNuevoInstrumento
           }
+          type="button"
         >
-
           <Plus size={19} />
 
           <span>
             Nuevo instrumento
           </span>
-
         </button>
 
       </header>
-
 
       {/* ====================================================
           ESTADÍSTICAS
@@ -494,19 +467,14 @@ function Inventario() {
           </div>
 
           <div>
-
-            <span>
-              Total
-            </span>
+            <span>Total</span>
 
             <strong>
               {estadisticas.total}
             </strong>
-
           </div>
 
         </div>
-
 
         <div className="inventory-stat-card">
 
@@ -515,19 +483,14 @@ function Inventario() {
           </div>
 
           <div>
-
-            <span>
-              Disponibles
-            </span>
+            <span>Disponibles</span>
 
             <strong>
               {estadisticas.disponibles}
             </strong>
-
           </div>
 
         </div>
-
 
         <div className="inventory-stat-card">
 
@@ -536,19 +499,14 @@ function Inventario() {
           </div>
 
           <div>
-
-            <span>
-              Prestados
-            </span>
+            <span>Prestados</span>
 
             <strong>
               {estadisticas.prestados}
             </strong>
-
           </div>
 
         </div>
-
 
         <div className="inventory-stat-card">
 
@@ -557,21 +515,16 @@ function Inventario() {
           </div>
 
           <div>
-
-            <span>
-              Mantenimiento
-            </span>
+            <span>Mantenimiento</span>
 
             <strong>
               {estadisticas.mantenimiento}
             </strong>
-
           </div>
 
         </div>
 
       </section>
-
 
       {/* ====================================================
           CONTENIDO
@@ -581,13 +534,11 @@ function Inventario() {
 
         <section className="inventory-panel">
 
-
           {/* =================================================
               TOOLBAR
           ================================================== */}
 
           <div className="inventory-toolbar">
-
 
             <div className="search-box">
 
@@ -604,9 +555,7 @@ function Inventario() {
                 }
               />
 
-
               {busqueda && (
-
                 <button
                   className="clear-search"
                   onClick={() =>
@@ -617,11 +566,9 @@ function Inventario() {
                 >
                   <X size={17} />
                 </button>
-
               )}
 
             </div>
-
 
             <select
               className="filter-select"
@@ -657,7 +604,6 @@ function Inventario() {
 
           </div>
 
-
           {/* =================================================
               TABLA
           ================================================== */}
@@ -669,48 +615,32 @@ function Inventario() {
               <thead>
 
                 <tr>
-
-                  <th>
-                    Código
-                  </th>
-
-                  <th>
-                    Instrumento
-                  </th>
-
-                  <th>
-                    Tipo
-                  </th>
-
-                  <th>
-                    Marca
-                  </th>
-
-                  <th>
-                    N.º Serie
-                  </th>
-
-                  <th>
-                    Estado
-                  </th>
-
-                  <th>
-                    Ubicación
-                  </th>
-
-                  <th>
-                    Acciones
-                  </th>
-
+                  <th>Código</th>
+                  <th>Instrumento</th>
+                  <th>Tipo</th>
+                  <th>Marca</th>
+                  <th>N.º Serie</th>
+                  <th>Estado</th>
+                  <th>Ubicación</th>
+                  <th>Acciones</th>
                 </tr>
 
               </thead>
 
-
               <tbody>
 
-                {instrumentosFiltrados.length ===
-                0 ? (
+                {cargando ? (
+
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="empty-table"
+                    >
+                      Cargando instrumentos...
+                    </td>
+                  </tr>
+
+                ) : instrumentosFiltrados.length === 0 ? (
 
                   <tr>
 
@@ -730,13 +660,10 @@ function Inventario() {
                         {busqueda ||
                         filtroEstado !==
                           "Todos"
-
                           ? "No se encontraron instrumentos con los filtros seleccionados."
-
                           : "Todavía no has registrado instrumentos."}
 
                       </span>
-
 
                       {!busqueda &&
                         filtroEstado ===
@@ -774,17 +701,10 @@ function Inventario() {
                       >
 
                         <td>
-
                           <strong className="instrument-code">
-
-                            {
-                              instrumento.codigo
-                            }
-
+                            {instrumento.codigo}
                           </strong>
-
                         </td>
-
 
                         <td>
 
@@ -803,29 +723,31 @@ function Inventario() {
                                   "percusion"
                                 )
                                 ? "🥁"
-
                                 : instrumento.tipo
                                     ?.toLowerCase()
                                     .includes(
                                       "madera"
                                     )
-
                                 ? "🎷"
-
                                 : "🎺"}
 
                             </div>
 
-
                             <div>
 
                               <strong>
-
                                 {
-                                  instrumento.instrumento
+                                  instrumento.nombre
                                 }
-
                               </strong>
+
+                              {instrumento.modelo && (
+                                <small>
+                                  {
+                                    instrumento.modelo
+                                  }
+                                </small>
+                              )}
 
                             </div>
 
@@ -833,36 +755,20 @@ function Inventario() {
 
                         </td>
 
-
                         <td>
-
-                          {
-                            instrumento.tipo ||
-                            "—"
-                          }
-
+                          {instrumento.tipo || "—"}
                         </td>
 
-
                         <td>
-
-                          {
-                            instrumento.marca ||
-                            "—"
-                          }
-
+                          {instrumento.marca || "—"}
                         </td>
 
-
                         <td>
-
                           {
-                            instrumento.serie ||
+                            instrumento.numero_serie ||
                             "—"
                           }
-
                         </td>
-
 
                         <td>
 
@@ -871,26 +777,20 @@ function Inventario() {
                               instrumento.estado
                             )}`}
                           >
-
                             {
                               instrumento.estado ||
                               "Sin estado"
                             }
-
                           </span>
 
                         </td>
 
-
                         <td>
-
                           {
                             instrumento.ubicacion ||
                             "—"
                           }
-
                         </td>
-
 
                         <td>
 
@@ -906,11 +806,8 @@ function Inventario() {
                               type="button"
                               title="Editar instrumento"
                             >
-
                               <Edit size={17} />
-
                             </button>
-
 
                             <button
                               className="action-button delete"
@@ -922,9 +819,7 @@ function Inventario() {
                               type="button"
                               title="Eliminar instrumento"
                             >
-
                               <Trash2 size={17} />
-
                             </button>
 
                           </div>
@@ -943,7 +838,6 @@ function Inventario() {
             </table>
 
           </div>
-
 
           {/* =================================================
               PIE
@@ -975,7 +869,6 @@ function Inventario() {
 
       </main>
 
-
       {/* ====================================================
           MODAL
       ===================================================== */}
@@ -998,7 +891,6 @@ function Inventario() {
 
           <div className="instrument-modal">
 
-
             {/* HEADER */}
 
             <div className="modal-header">
@@ -1017,26 +909,21 @@ function Inventario() {
 
                   {modoEdicion
                     ? "Actualiza la información del instrumento."
-
                     : "Registra un nuevo instrumento en el inventario."}
 
                 </p>
 
               </div>
 
-
               <button
                 className="modal-close"
                 onClick={cerrarModal}
                 type="button"
               >
-
                 <X size={21} />
-
               </button>
 
             </div>
-
 
             {/* FORMULARIO */}
 
@@ -1048,7 +935,6 @@ function Inventario() {
             >
 
               <div className="form-grid">
-
 
                 {/* CÓDIGO */}
 
@@ -1074,22 +960,21 @@ function Inventario() {
 
                 </div>
 
-
                 {/* INSTRUMENTO */}
 
                 <div className="form-group">
 
-                  <label htmlFor="instrumento">
+                  <label htmlFor="nombre">
                     Instrumento *
                   </label>
 
                   <input
-                    id="instrumento"
-                    name="instrumento"
+                    id="nombre"
+                    name="nombre"
                     type="text"
                     placeholder="Ej: Trompeta"
                     value={
-                      instrumentoActual.instrumento
+                      instrumentoActual.nombre
                     }
                     onChange={
                       manejarCambio
@@ -1097,7 +982,6 @@ function Inventario() {
                   />
 
                 </div>
-
 
                 {/* TIPO */}
 
@@ -1146,7 +1030,6 @@ function Inventario() {
 
                 </div>
 
-
                 {/* MARCA */}
 
                 <div className="form-group">
@@ -1170,22 +1053,21 @@ function Inventario() {
 
                 </div>
 
-
-                {/* SERIE */}
+                {/* MODELO */}
 
                 <div className="form-group">
 
-                  <label htmlFor="serie">
-                    Número de serie
+                  <label htmlFor="modelo">
+                    Modelo
                   </label>
 
                   <input
-                    id="serie"
-                    name="serie"
+                    id="modelo"
+                    name="modelo"
                     type="text"
-                    placeholder="Ej: 123456789"
+                    placeholder="Ej: YTR-2330"
                     value={
-                      instrumentoActual.serie
+                      instrumentoActual.modelo
                     }
                     onChange={
                       manejarCambio
@@ -1194,6 +1076,28 @@ function Inventario() {
 
                 </div>
 
+                {/* NÚMERO DE SERIE */}
+
+                <div className="form-group">
+
+                  <label htmlFor="numero_serie">
+                    Número de serie
+                  </label>
+
+                  <input
+                    id="numero_serie"
+                    name="numero_serie"
+                    type="text"
+                    placeholder="Ej: 123456789"
+                    value={
+                      instrumentoActual.numero_serie
+                    }
+                    onChange={
+                      manejarCambio
+                    }
+                  />
+
+                </div>
 
                 {/* ESTADO */}
 
@@ -1234,7 +1138,6 @@ function Inventario() {
 
                 </div>
 
-
                 {/* UBICACIÓN */}
 
                 <div className="form-group">
@@ -1260,7 +1163,6 @@ function Inventario() {
 
               </div>
 
-
               {/* OBSERVACIONES */}
 
               <div className="form-group full-width">
@@ -1284,7 +1186,6 @@ function Inventario() {
 
               </div>
 
-
               {/* BOTONES */}
 
               <div className="modal-actions">
@@ -1295,17 +1196,20 @@ function Inventario() {
                   onClick={
                     cerrarModal
                   }
+                  disabled={guardando}
                 >
                   Cancelar
                 </button>
 
-
                 <button
                   type="submit"
                   className="primary-button"
+                  disabled={guardando}
                 >
 
-                  {modoEdicion
+                  {guardando
+                    ? "Guardando..."
+                    : modoEdicion
                     ? "Guardar cambios"
                     : "Registrar instrumento"}
 

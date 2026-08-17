@@ -1,3 +1,4 @@
+import "../../styles/dashboard.css";
 import {
   Archive,
   CheckCircle,
@@ -12,14 +13,8 @@ import {
   X,
 } from "lucide-react";
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  useNavigate,
-} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -30,70 +25,123 @@ import {
 
 
 // ============================================================
+// BANDA CONTROL
 // DASHBOARD ADMINISTRADOR
 // ============================================================
 
 function AdminDashboard() {
 
-  const {
-    user,
-    logout,
-  } = useAuth();
+  const { user, logout } = useAuth();
 
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ESTADOS
-  // ----------------------------------------------------------
+  // ==========================================================
 
-  const [
-    menuAbierto,
-    setMenuAbierto,
-  ] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
+  const [instrumentos, setInstrumentos] = useState([]);
 
-  const [
-    instrumentos,
-    setInstrumentos,
-  ] = useState([]);
-
-
-  const [
-    estadisticas,
-    setEstadisticas,
-  ] = useState({
+  const [estadisticas, setEstadisticas] = useState({
     total: 0,
     disponibles: 0,
     prestados: 0,
     mantenimiento: 0,
+    baja: 0,
   });
 
+  const [cargando, setCargando] = useState(true);
 
-  // ----------------------------------------------------------
-  // CARGAR DATOS
-  // ----------------------------------------------------------
+  const [error, setError] = useState("");
 
-  const cargarDatos = () => {
 
-    const datos =
-      obtenerInstrumentos();
+  // ==========================================================
+  // CARGAR DATOS DESDE LA API
+  // ==========================================================
 
-    const estadisticasActuales =
-      obtenerEstadisticas();
+  const cargarDatos = async () => {
 
-    setInstrumentos(datos);
+    try {
 
-    setEstadisticas(
-      estadisticasActuales
-    );
+      setCargando(true);
+      setError("");
+
+      // Obtener instrumentos desde MySQL
+      const datos = await obtenerInstrumentos();
+
+      // Obtener estadísticas
+      const estadisticasActuales =
+        await obtenerEstadisticas();
+
+      // Garantizar que siempre trabajamos con arrays
+      setInstrumentos(
+        Array.isArray(datos)
+          ? datos
+          : []
+      );
+
+      setEstadisticas({
+        total:
+          Number(
+            estadisticasActuales?.total || 0
+          ),
+
+        disponibles:
+          Number(
+            estadisticasActuales?.disponibles || 0
+          ),
+
+        prestados:
+          Number(
+            estadisticasActuales?.prestados || 0
+          ),
+
+        mantenimiento:
+          Number(
+            estadisticasActuales?.mantenimiento || 0
+          ),
+
+        baja:
+          Number(
+            estadisticasActuales?.baja || 0
+          ),
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Error cargando dashboard:",
+        error
+      );
+
+      setInstrumentos([]);
+
+      setEstadisticas({
+        total: 0,
+        disponibles: 0,
+        prestados: 0,
+        mantenimiento: 0,
+        baja: 0,
+      });
+
+      setError(
+        error.message ||
+        "No fue posible cargar la información del dashboard."
+      );
+
+    } finally {
+
+      setCargando(false);
+
+    }
   };
 
 
-  // ----------------------------------------------------------
-  // AL ENTRAR AL DASHBOARD
-  // ----------------------------------------------------------
+  // ==========================================================
+  // CARGA INICIAL
+  // ==========================================================
 
   useEffect(() => {
 
@@ -102,16 +150,17 @@ function AdminDashboard() {
   }, []);
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ESCUCHAR CAMBIOS DEL INVENTARIO
-  // ----------------------------------------------------------
+  // ==========================================================
 
   useEffect(() => {
 
-    const actualizarDashboard =
-      () => {
-        cargarDatos();
-      };
+    const actualizarDashboard = () => {
+
+      cargarDatos();
+
+    };
 
 
     window.addEventListener(
@@ -132,9 +181,9 @@ function AdminDashboard() {
   }, []);
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CERRAR SESIÓN
-  // ----------------------------------------------------------
+  // ==========================================================
 
   const cerrarSesion = () => {
 
@@ -143,45 +192,89 @@ function AdminDashboard() {
   };
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ÚLTIMOS INSTRUMENTOS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   const instrumentosRecientes =
-    [...instrumentos]
-      .reverse()
-      .slice(0, 5);
+    Array.isArray(instrumentos)
+      ? instrumentos.slice(0, 5)
+      : [];
 
 
-  // ----------------------------------------------------------
-  // CLASE ESTADO
-  // ----------------------------------------------------------
+  // ==========================================================
+  // CLASE PARA ESTADO
+  // ==========================================================
 
   const claseEstado = (estado) => {
 
-    if (
-      estado ===
-      "Disponible"
-    ) {
-      return "available";
-    }
+    switch (estado) {
 
-    if (
-      estado ===
-      "Prestado"
-    ) {
-      return "loaned";
-    }
+      case "Disponible":
+        return "available";
 
-    if (
-      estado ===
-      "Mantenimiento"
-    ) {
-      return "maintenance";
-    }
+      case "Prestado":
+        return "loaned";
 
-    return "";
+      case "Mantenimiento":
+        return "maintenance";
+
+      case "Baja":
+        return "retired";
+
+      default:
+        return "";
+
+    }
   };
+
+
+  // ==========================================================
+  // ICONO DEL INSTRUMENTO
+  // ==========================================================
+
+  const iconoInstrumento = (tipo) => {
+
+    const texto =
+      String(tipo || "")
+        .toLowerCase();
+
+
+    if (
+      texto.includes("percusión") ||
+      texto.includes("percusion")
+    ) {
+      return "🥁";
+    }
+
+
+    if (
+      texto.includes("madera")
+    ) {
+      return "🎷";
+    }
+
+
+    if (
+      texto.includes("cuerda")
+    ) {
+      return "🎻";
+    }
+
+
+    return "🎺";
+  };
+
+
+  // ==========================================================
+  // NOMBRE DEL USUARIO
+  // ==========================================================
+
+  const nombreUsuario =
+    user?.nombre ||
+    user?.name ||
+    user?.usuario ||
+    "Administrador";
 
 
   // ==========================================================
@@ -205,17 +298,13 @@ function AdminDashboard() {
         }`}
       >
 
-
-        {/* HEADER SIDEBAR */}
+        {/* HEADER */}
 
         <div className="sidebar-header">
 
           <div className="sidebar-logo">
-
             <Shield size={28} />
-
           </div>
-
 
           <div>
 
@@ -229,38 +318,37 @@ function AdminDashboard() {
 
           </div>
 
-
-          <button
-            className="close-menu"
-            onClick={() =>
-              setMenuAbierto(false)
-            }
-          >
-
-            <X size={22} />
-
-          </button>
-
         </div>
 
 
-        {/* MENÚ */}
+        {/* CERRAR MENÚ MÓVIL */}
 
-        <nav className="sidebar-menu">
+        <button
+          className="sidebar-close"
+          onClick={() =>
+            setMenuAbierto(false)
+          }
+          type="button"
+          aria-label="Cerrar menú"
+        >
+          <X size={22} />
+        </button>
 
 
-          <p className="menu-title">
-            PRINCIPAL
-          </p>
+        {/* NAVEGACIÓN */}
 
-
-          {/* DASHBOARD */}
+        <nav className="sidebar-nav">
 
           <button
-            className="menu-item active"
-            onClick={() =>
-              navigate("/admin")
-            }
+            type="button"
+            className="sidebar-link active"
+            onClick={() => {
+
+              navigate("/admin");
+
+              setMenuAbierto(false);
+
+            }}
           >
 
             <Archive size={20} />
@@ -272,18 +360,19 @@ function AdminDashboard() {
           </button>
 
 
-          {/* INVENTARIO */}
-
           <button
-            className="menu-item"
-            onClick={() =>
-              navigate(
-                "/admin/inventario"
-              )
-            }
+            type="button"
+            className="sidebar-link"
+            onClick={() => {
+
+              navigate("/admin/inventario");
+
+              setMenuAbierto(false);
+
+            }}
           >
 
-            <Archive size={20} />
+            <ToolCase size={20} />
 
             <span>
               Inventario
@@ -292,15 +381,16 @@ function AdminDashboard() {
           </button>
 
 
-          {/* PRÉSTAMOS */}
-
           <button
-            className="menu-item"
-            onClick={() =>
-              alert(
-                "Módulo de préstamos próximamente."
-              )
-            }
+            type="button"
+            className="sidebar-link"
+            onClick={() => {
+
+              navigate("/admin/prestamos");
+
+              setMenuAbierto(false);
+
+            }}
           >
 
             <Clock size={20} />
@@ -312,40 +402,16 @@ function AdminDashboard() {
           </button>
 
 
-          {/* MANTENIMIENTO */}
-
           <button
-            className="menu-item"
-            onClick={() =>
-              alert(
-                "Módulo de mantenimiento próximamente."
-              )
-            }
-          >
+            type="button"
+            className="sidebar-link"
+            onClick={() => {
 
-            <ToolCase size={20} />
+              navigate("/admin/usuarios");
 
-            <span>
-              Mantenimiento
-            </span>
+              setMenuAbierto(false);
 
-          </button>
-
-
-          <p className="menu-title">
-            ADMINISTRACIÓN
-          </p>
-
-
-          {/* USUARIOS */}
-
-          <button
-            className="menu-item"
-            onClick={() =>
-              alert(
-                "Módulo de usuarios próximamente."
-              )
-            }
+            }}
           >
 
             <Users size={20} />
@@ -357,15 +423,16 @@ function AdminDashboard() {
           </button>
 
 
-          {/* CONFIGURACIÓN */}
-
           <button
-            className="menu-item"
-            onClick={() =>
-              alert(
-                "Configuración próximamente."
-              )
-            }
+            type="button"
+            className="sidebar-link"
+            onClick={() => {
+
+              navigate("/admin/configuracion");
+
+              setMenuAbierto(false);
+
+            }}
           >
 
             <Settings size={20} />
@@ -381,39 +448,34 @@ function AdminDashboard() {
 
         {/* USUARIO */}
 
-        <div className="sidebar-bottom">
+        <div className="sidebar-user">
 
+          <div className="sidebar-user-icon">
 
-          <div className="sidebar-user">
-
-            <UserCircle size={38} />
-
-            <div>
-
-              <strong>
-                {user?.nombre ||
-                  "Administrador"}
-              </strong>
-
-              <span>
-                Administrador
-              </span>
-
-            </div>
+            <UserCircle size={34} />
 
           </div>
 
+          <div className="sidebar-user-info">
+
+            <strong>
+              {nombreUsuario}
+            </strong>
+
+            <span>
+              Administrador
+            </span>
+
+          </div>
 
           <button
+            type="button"
             className="logout-button"
-            onClick={
-              cerrarSesion
-            }
+            onClick={cerrarSesion}
+            title="Cerrar sesión"
           >
 
             <LogOut size={19} />
-
-            Cerrar sesión
 
           </button>
 
@@ -423,50 +485,57 @@ function AdminDashboard() {
 
 
       {/* ======================================================
-          CONTENIDO
+          CONTENIDO PRINCIPAL
       ====================================================== */}
 
       <main className="dashboard-main">
 
 
-        {/* HEADER */}
+        {/* ====================================================
+            HEADER
+        ===================================================== */}
 
         <header className="dashboard-header">
 
+          <div className="dashboard-header-left">
 
-          <button
-            className="mobile-menu"
-            onClick={() =>
-              setMenuAbierto(true)
-            }
-          >
+            <button
+              type="button"
+              className="menu-button"
+              onClick={() =>
+                setMenuAbierto(true)
+              }
+              aria-label="Abrir menú"
+            >
 
-            <Menu size={25} />
+              <Menu size={24} />
 
-          </button>
+            </button>
 
 
-          <div>
+            <div>
 
-            <h1>
-              Dashboard
-            </h1>
+              <h1>
+                Dashboard
+              </h1>
 
-            <p>
-              Resumen general de la
-              banda de marchas
-            </p>
+              <p>
+                Bienvenido al panel de administración de BandaControl.
+              </p>
+
+            </div>
 
           </div>
 
 
-          <div className="header-user">
+          <div className="dashboard-header-user">
 
-            <div className="header-user-info">
+            <UserCircle size={35} />
+
+            <div>
 
               <strong>
-                {user?.nombre ||
-                  "Administrador"}
+                {nombreUsuario}
               </strong>
 
               <span>
@@ -475,80 +544,58 @@ function AdminDashboard() {
 
             </div>
 
-            <UserCircle
-              size={42}
-            />
-
           </div>
 
         </header>
 
 
         {/* ====================================================
-            CONTENIDO DASHBOARD
-        ==================================================== */}
+            CONTENIDO
+        ===================================================== */}
 
-        <section className="dashboard-content">
+        <div className="dashboard-content">
 
 
-          {/* BIENVENIDA */}
+          {/* ERROR */}
 
-          <div className="welcome-card">
+          {error && (
 
-            <div>
+            <div className="dashboard-error">
 
-              <span className="welcome-label">
-                PANEL DE ADMINISTRACIÓN
+              <strong>
+                No se pudieron cargar los datos
+              </strong>
+
+              <span>
+                {error}
               </span>
 
-              <h2>
-
-                ¡Bienvenido,{" "}
-
-                {user?.nombre ||
-                  "Administrador"}
-
-                ! 👋
-
-              </h2>
-
-              <p>
-
-                Desde aquí puedes
-                controlar el inventario
-                y los instrumentos
-                de la banda.
-
-              </p>
+              <button
+                type="button"
+                onClick={cargarDatos}
+              >
+                Intentar nuevamente
+              </button>
 
             </div>
 
-
-            <div className="welcome-icon">
-
-              <Shield size={70} />
-
-            </div>
-
-          </div>
+          )}
 
 
           {/* ==================================================
-              ESTADÍSTICAS
-          ================================================== */}
+              TARJETAS DE ESTADÍSTICAS
+          =================================================== */}
 
-          <div className="stats-grid">
+          <section className="dashboard-stats">
 
 
             {/* TOTAL */}
 
-            <div className="stat-card stat-blue">
+            <div className="dashboard-stat-card">
 
-              <div className="stat-icon">
+              <div className="dashboard-stat-icon blue">
 
-                <Archive
-                  size={25}
-                />
+                <Archive size={24} />
 
               </div>
 
@@ -559,7 +606,9 @@ function AdminDashboard() {
                 </span>
 
                 <strong>
-                  {estadisticas.total}
+                  {cargando
+                    ? "..."
+                    : estadisticas.total}
                 </strong>
 
               </div>
@@ -569,13 +618,11 @@ function AdminDashboard() {
 
             {/* DISPONIBLES */}
 
-            <div className="stat-card stat-green">
+            <div className="dashboard-stat-card">
 
-              <div className="stat-icon">
+              <div className="dashboard-stat-icon green">
 
-                <CheckCircle
-                  size={25}
-                />
+                <CheckCircle size={24} />
 
               </div>
 
@@ -586,9 +633,9 @@ function AdminDashboard() {
                 </span>
 
                 <strong>
-                  {
-                    estadisticas.disponibles
-                  }
+                  {cargando
+                    ? "..."
+                    : estadisticas.disponibles}
                 </strong>
 
               </div>
@@ -598,13 +645,11 @@ function AdminDashboard() {
 
             {/* PRESTADOS */}
 
-            <div className="stat-card stat-red">
+            <div className="dashboard-stat-card">
 
-              <div className="stat-icon">
+              <div className="dashboard-stat-icon red">
 
-                <Clock
-                  size={25}
-                />
+                <Clock size={24} />
 
               </div>
 
@@ -615,9 +660,9 @@ function AdminDashboard() {
                 </span>
 
                 <strong>
-                  {
-                    estadisticas.prestados
-                  }
+                  {cargando
+                    ? "..."
+                    : estadisticas.prestados}
                 </strong>
 
               </div>
@@ -627,13 +672,11 @@ function AdminDashboard() {
 
             {/* MANTENIMIENTO */}
 
-            <div className="stat-card stat-orange">
+            <div className="dashboard-stat-card">
 
-              <div className="stat-icon">
+              <div className="dashboard-stat-icon orange">
 
-                <ToolCase
-                  size={25}
-                />
+                <ToolCase size={24} />
 
               </div>
 
@@ -644,249 +687,490 @@ function AdminDashboard() {
                 </span>
 
                 <strong>
-                  {
-                    estadisticas.mantenimiento
-                  }
+                  {cargando
+                    ? "..."
+                    : estadisticas.mantenimiento}
                 </strong>
 
               </div>
 
             </div>
 
-          </div>
+          </section>
 
 
           {/* ==================================================
-              DOS COLUMNAS
-          ================================================== */}
+              ACCIONES RÁPIDAS
+          =================================================== */}
 
-          <div className="dashboard-grid">
+          <section className="dashboard-quick-actions">
+
+            <div className="dashboard-section-header">
+
+              <div>
+
+                <h2>
+                  Acciones rápidas
+                </h2>
+
+                <p>
+                  Accede rápidamente a las funciones principales.
+                </p>
+
+              </div>
+
+            </div>
 
 
-            {/* =================================================
-                INVENTARIO RECIENTE
-            ================================================= */}
-
-            <section className="dashboard-panel">
+            <div className="quick-actions-grid">
 
 
-              <div className="panel-header">
+              <button
+                type="button"
+                className="quick-action-card"
+                onClick={() =>
+                  navigate("/admin/inventario")
+                }
+              >
 
-                <div>
+                <div className="quick-action-icon blue">
 
-                  <h3>
-                    Inventario reciente
-                  </h3>
-
-                  <p>
-                    Últimos instrumentos
-                    registrados
-                  </p>
+                  <Archive size={25} />
 
                 </div>
 
+                <div>
 
-                <button
-                  onClick={() =>
-                    navigate(
-                      "/admin/inventario"
-                    )
-                  }
-                >
-                  Ver todos
-                </button>
+                  <strong>
+                    Gestionar inventario
+                  </strong>
+
+                  <span>
+                    Ver, agregar, editar y eliminar instrumentos.
+                  </span>
+
+                </div>
+
+              </button>
+
+
+              <button
+                type="button"
+                className="quick-action-card"
+                onClick={() =>
+                  navigate("/admin/prestamos")
+                }
+              >
+
+                <div className="quick-action-icon orange">
+
+                  <Clock size={25} />
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    Gestionar préstamos
+                  </strong>
+
+                  <span>
+                    Administrar préstamos y devoluciones.
+                  </span>
+
+                </div>
+
+              </button>
+
+
+              <button
+                type="button"
+                className="quick-action-card"
+                onClick={() =>
+                  navigate("/admin/usuarios")
+                }
+              >
+
+                <div className="quick-action-icon green">
+
+                  <Users size={25} />
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    Gestionar usuarios
+                  </strong>
+
+                  <span>
+                    Administrar los usuarios del sistema.
+                  </span>
+
+                </div>
+
+              </button>
+
+            </div>
+
+          </section>
+
+
+          {/* ==================================================
+              ÚLTIMOS INSTRUMENTOS
+          =================================================== */}
+
+          <section className="dashboard-panel">
+
+
+            <div className="dashboard-section-header">
+
+              <div>
+
+                <h2>
+                  Instrumentos recientes
+                </h2>
+
+                <p>
+                  Últimos instrumentos registrados en el inventario.
+                </p>
 
               </div>
 
 
-              <div className="instrument-list">
+              <button
+                type="button"
+                className="dashboard-view-all"
+                onClick={() =>
+                  navigate("/admin/inventario")
+                }
+              >
+                Ver inventario
+              </button>
+
+            </div>
 
 
-                {instrumentosRecientes.length ===
-                0 ? (
+            <div className="dashboard-table-container">
 
-                  <div
-                    style={{
-                      padding:
-                        "30px",
-                      textAlign:
-                        "center",
-                      color:
-                        "#6b7280",
-                    }}
-                  >
+              <table className="dashboard-table">
 
-                    <Archive
-                      size={35}
-                    />
+                <thead>
 
-                    <p>
-                      Todavía no hay
-                      instrumentos
-                      registrados.
-                    </p>
+                  <tr>
 
-                    <button
-                      onClick={() =>
-                        navigate(
-                          "/admin/inventario"
-                        )
-                      }
-                    >
-                      Registrar instrumento
-                    </button>
+                    <th>
+                      Código
+                    </th>
 
-                  </div>
+                    <th>
+                      Instrumento
+                    </th>
 
-                ) : (
+                    <th>
+                      Tipo
+                    </th>
 
-                  instrumentosRecientes.map(
-                    (instrumento) => (
+                    <th>
+                      Marca
+                    </th>
 
-                      <div
-                        className="instrument-item"
-                        key={
-                          instrumento.id
-                        }
+                    <th>
+                      Estado
+                    </th>
+
+                    <th>
+                      Ubicación
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                  {cargando ? (
+
+                    <tr>
+
+                      <td
+                        colSpan="6"
+                        className="dashboard-empty"
                       >
 
+                        Cargando instrumentos...
 
-                        <div className="instrument-avatar">
+                      </td>
 
-                          🎵
+                    </tr>
 
-                        </div>
+                  ) : instrumentosRecientes.length === 0 ? (
 
+                    <tr>
 
-                        <div>
+                      <td
+                        colSpan="6"
+                        className="dashboard-empty"
+                      >
 
-                          <strong>
+                        <Archive size={35} />
 
-                            {
-                              instrumento.instrumento
-                            }
+                        <strong>
+                          No hay instrumentos registrados
+                        </strong>
 
-                          </strong>
-
-                          <span>
-
-                            {
-                              instrumento.codigo
-                            }
-
-                            {" • "}
-
-                            {
-                              instrumento.marca ||
-                              "Sin marca"
-                            }
-
-                          </span>
-
-                        </div>
-
-
-                        <span
-                          className={`status ${claseEstado(
-                            instrumento.estado
-                          )}`}
-                        >
-
-                          {
-                            instrumento.estado
-                          }
-
+                        <span>
+                          Agrega el primer instrumento al inventario.
                         </span>
 
-                      </div>
+                        <button
+                          type="button"
+                          className="primary-button"
+                          onClick={() =>
+                            navigate("/admin/inventario")
+                          }
+                        >
+                          Agregar instrumento
+                        </button>
 
+                      </td>
+
+                    </tr>
+
+                  ) : (
+
+                    instrumentosRecientes.map(
+                      (instrumento) => (
+
+                        <tr
+                          key={instrumento.id}
+                        >
+
+                          {/* CÓDIGO */}
+
+                          <td>
+
+                            <strong>
+                              {instrumento.codigo}
+                            </strong>
+
+                          </td>
+
+
+                          {/* INSTRUMENTO */}
+
+                          <td>
+
+                            <div className="dashboard-instrument">
+
+                              <div className="dashboard-instrument-icon">
+
+                                {iconoInstrumento(
+                                  instrumento.tipo
+                                )}
+
+                              </div>
+
+                              <div>
+
+                                <strong>
+                                  {instrumento.nombre || "—"}
+                                </strong>
+
+                              </div>
+
+                            </div>
+
+                          </td>
+
+
+                          {/* TIPO */}
+
+                          <td>
+
+                            {instrumento.tipo || "—"}
+
+                          </td>
+
+
+                          {/* MARCA */}
+
+                          <td>
+
+                            {instrumento.marca || "—"}
+
+                          </td>
+
+
+                          {/* ESTADO */}
+
+                          <td>
+
+                            <span
+                              className={`status ${claseEstado(
+                                instrumento.estado
+                              )}`}
+                            >
+
+                              {instrumento.estado || "—"}
+
+                            </span>
+
+                          </td>
+
+
+                          {/* UBICACIÓN */}
+
+                          <td>
+
+                            {instrumento.ubicacion || "—"}
+
+                          </td>
+
+                        </tr>
+
+                      )
                     )
-                  )
 
-                )}
+                  )}
 
-              </div>
+                </tbody>
 
-            </section>
+              </table>
 
+            </div>
 
-            {/* =================================================
-                PRÉSTAMOS
-            ================================================= */}
-
-            <section className="dashboard-panel">
+          </section>
 
 
-              <div className="panel-header">
+          {/* ==================================================
+              RESUMEN
+          =================================================== */}
 
-                <div>
+          <section className="dashboard-summary">
 
-                  <h3>
-                    Últimos préstamos
-                  </h3>
+            <div className="dashboard-summary-card">
 
-                  <p>
-                    Movimientos recientes
-                  </p>
+              <div className="dashboard-summary-icon green">
 
-                </div>
-
-                <button
-                  onClick={() =>
-                    alert(
-                      "El módulo de préstamos se implementará próximamente."
-                    )
-                  }
-                >
-                  Ver todos
-                </button>
+                <CheckCircle size={23} />
 
               </div>
 
+              <div>
 
-              <div className="loan-list">
+                <span>
+                  Disponibles
+                </span>
 
-
-                <div
-                  className="loan-item"
-                >
-
-                  <div className="student-avatar">
-                    --
-                  </div>
-
-                  <div>
-
-                    <strong>
-                      Sin préstamos
-                    </strong>
-
-                    <span>
-                      El módulo de préstamos
-                      aún no está configurado.
-                    </span>
-
-                  </div>
-
-                  <small>
-                    —
-                  </small>
-
-                </div>
-
+                <strong>
+                  {estadisticas.disponibles}
+                </strong>
 
               </div>
 
-            </section>
+            </div>
 
-          </div>
 
-        </section>
+            <div className="dashboard-summary-card">
+
+              <div className="dashboard-summary-icon red">
+
+                <Clock size={23} />
+
+              </div>
+
+              <div>
+
+                <span>
+                  En préstamo
+                </span>
+
+                <strong>
+                  {estadisticas.prestados}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div className="dashboard-summary-card">
+
+              <div className="dashboard-summary-icon orange">
+
+                <ToolCase size={23} />
+
+              </div>
+
+              <div>
+
+                <span>
+                  En mantenimiento
+                </span>
+
+                <strong>
+                  {estadisticas.mantenimiento}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div className="dashboard-summary-card">
+
+              <div className="dashboard-summary-icon gray">
+
+                <Archive size={23} />
+
+              </div>
+
+              <div>
+
+                <span>
+                  Dados de baja
+                </span>
+
+                <strong>
+                  {estadisticas.baja}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
 
       </main>
 
+
+      {/* ======================================================
+          OVERLAY MÓVIL
+      ====================================================== */}
+
+      {menuAbierto && (
+
+        <div
+          className="sidebar-overlay"
+          onClick={() =>
+            setMenuAbierto(false)
+          }
+        />
+
+      )}
+
     </div>
+
   );
 }
+
+
+// ============================================================
+// EXPORTACIÓN
+// ============================================================
 
 export default AdminDashboard;

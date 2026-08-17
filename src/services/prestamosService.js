@@ -1,12 +1,12 @@
 // ============================================================
 // BANDA CONTROL
-// SERVICIO DE INSTRUMENTOS
+// SERVICIO DE PRÉSTAMOS
 // ============================================================
 
-const API_URL = "http://localhost/banda/backend/instrumentos";
+const API_URL = "http://localhost/banda/backend/routes/prestamos.php";
 
 // ============================================================
-// MANEJAR RESPUESTA
+// PROCESAR RESPUESTA
 // ============================================================
 
 async function procesarRespuesta(response) {
@@ -35,15 +35,14 @@ async function procesarRespuesta(response) {
 }
 
 // ============================================================
-// OBTENER TODOS
+// OBTENER TODOS LOS PRÉSTAMOS
 // ============================================================
 
-export async function obtenerInstrumentos() {
-
+export async function obtenerPrestamos() {
     const response = await fetch(API_URL, {
         method: "GET",
         headers: {
-            "Accept": "application/json"
+            Accept: "application/json"
         }
     });
 
@@ -53,13 +52,14 @@ export async function obtenerInstrumentos() {
 }
 
 // ============================================================
-// OBTENER UNO
+// OBTENER UN PRÉSTAMO
 // ============================================================
 
-export async function obtenerInstrumento(id) {
-
+export async function obtenerPrestamo(id) {
     if (!id) {
-        throw new Error("El ID del instrumento es obligatorio.");
+        throw new Error(
+            "El ID del préstamo es obligatorio."
+        );
     }
 
     const response = await fetch(
@@ -67,7 +67,7 @@ export async function obtenerInstrumento(id) {
         {
             method: "GET",
             headers: {
-                "Accept": "application/json"
+                Accept: "application/json"
             }
         }
     );
@@ -78,17 +78,16 @@ export async function obtenerInstrumento(id) {
 }
 
 // ============================================================
-// CREAR
+// CREAR PRÉSTAMO
 // ============================================================
 
-export async function crearInstrumento(datos) {
-
+export async function crearPrestamo(datos) {
     const response = await fetch(API_URL, {
         method: "POST",
 
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            Accept: "application/json"
         },
 
         body: JSON.stringify(datos)
@@ -100,26 +99,32 @@ export async function crearInstrumento(datos) {
 }
 
 // ============================================================
-// ACTUALIZAR
+// DEVOLVER PRÉSTAMO
 // ============================================================
 
-export async function actualizarInstrumento(id, datos) {
-
+export async function devolverPrestamo(
+    id,
+    observaciones = ""
+) {
     if (!id) {
-        throw new Error("El ID del instrumento es obligatorio.");
+        throw new Error(
+            "El ID del préstamo es obligatorio."
+        );
     }
 
     const response = await fetch(
-        `${API_URL}?id=${encodeURIComponent(id)}`,
+        `${API_URL}?accion=devolver&id=${encodeURIComponent(id)}`,
         {
-            method: "PUT",
+            method: "POST",
 
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "application/json"
+                Accept: "application/json"
             },
 
-            body: JSON.stringify(datos)
+            body: JSON.stringify({
+                observaciones
+            })
         }
     );
 
@@ -129,13 +134,14 @@ export async function actualizarInstrumento(id, datos) {
 }
 
 // ============================================================
-// ELIMINAR
+// ELIMINAR PRÉSTAMO
 // ============================================================
 
-export async function eliminarInstrumento(id) {
-
+export async function eliminarPrestamo(id) {
     if (!id) {
-        throw new Error("El ID del instrumento es obligatorio.");
+        throw new Error(
+            "El ID del préstamo es obligatorio."
+        );
     }
 
     const response = await fetch(
@@ -144,45 +150,10 @@ export async function eliminarInstrumento(id) {
             method: "DELETE",
 
             headers: {
-                "Accept": "application/json"
+                Accept: "application/json"
             }
         }
     );
 
     return procesarRespuesta(response);
-}
-
-// ============================================================
-// ESTADÍSTICAS
-// ============================================================
-
-export async function obtenerEstadisticas() {
-
-    const instrumentos = await obtenerInstrumentos();
-
-    const total = instrumentos.length;
-
-    const disponibles = instrumentos.filter(
-        instrumento => instrumento.estado === "Disponible"
-    ).length;
-
-    const prestados = instrumentos.filter(
-        instrumento => instrumento.estado === "Prestado"
-    ).length;
-
-    const mantenimiento = instrumentos.filter(
-        instrumento => instrumento.estado === "Mantenimiento"
-    ).length;
-
-    const baja = instrumentos.filter(
-        instrumento => instrumento.estado === "Baja"
-    ).length;
-
-    return {
-        total,
-        disponibles,
-        prestados,
-        mantenimiento,
-        baja
-    };
 }
