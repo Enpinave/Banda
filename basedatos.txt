@@ -1,0 +1,373 @@
+-- ============================================================
+-- BANDA CONTROL
+-- BASE DE DATOS: bandacol
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- ELIMINAR BASE ANTERIOR
+-- ------------------------------------------------------------
+
+DROP DATABASE IF EXISTS bandacol;
+
+
+-- ------------------------------------------------------------
+-- CREAR BASE DE DATOS
+-- ------------------------------------------------------------
+
+CREATE DATABASE bandacol
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+
+USE bandacol;
+
+
+-- ============================================================
+-- TABLA: usuarios
+-- ============================================================
+
+CREATE TABLE usuarios (
+
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    nombre VARCHAR(100) NOT NULL,
+
+    apellido VARCHAR(100) NOT NULL,
+
+    usuario VARCHAR(50) NOT NULL,
+
+    email VARCHAR(150) NULL,
+
+    password VARCHAR(255) NOT NULL,
+
+    rol ENUM(
+        'admin',
+        'estudiante'
+    ) NOT NULL DEFAULT 'estudiante',
+
+    estado ENUM(
+        'activo',
+        'inactivo'
+    ) NOT NULL DEFAULT 'activo',
+
+    fecha_creacion TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+    fecha_actualizacion TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    UNIQUE KEY uk_usuarios_usuario (usuario),
+
+    UNIQUE KEY uk_usuarios_email (email)
+
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+-- ============================================================
+-- TABLA: instrumentos
+-- ============================================================
+
+CREATE TABLE instrumentos (
+
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    codigo VARCHAR(50) NOT NULL,
+
+    nombre VARCHAR(100) NOT NULL,
+
+    tipo VARCHAR(100) NOT NULL,
+
+    marca VARCHAR(100) NULL,
+
+    modelo VARCHAR(100) NULL,
+
+    numero_serie VARCHAR(100) NULL,
+
+    estado ENUM(
+        'Disponible',
+        'Prestado',
+        'Mantenimiento',
+        'Baja'
+    ) NOT NULL DEFAULT 'Disponible',
+
+    ubicacion VARCHAR(150) NULL,
+
+    observaciones TEXT NULL,
+
+    fecha_registro TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+    fecha_actualizacion TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    UNIQUE KEY uk_instrumentos_codigo (codigo),
+
+    UNIQUE KEY uk_instrumentos_serie (numero_serie),
+
+    KEY idx_instrumentos_estado (estado)
+
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+-- ============================================================
+-- TABLA: prestamos
+-- ============================================================
+
+CREATE TABLE prestamos (
+
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+    instrumento_id INT UNSIGNED NOT NULL,
+
+    estudiante_id INT UNSIGNED NOT NULL,
+
+    fecha_prestamo DATETIME NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+    fecha_devolucion_prevista DATE NOT NULL,
+
+    fecha_devolucion_real DATETIME NULL,
+
+    estado ENUM(
+        'Activo',
+        'Devuelto',
+        'Vencido'
+    ) NOT NULL DEFAULT 'Activo',
+
+    observaciones TEXT NULL,
+
+    PRIMARY KEY (id),
+
+    KEY idx_prestamos_instrumento (instrumento_id),
+
+    KEY idx_prestamos_estudiante (estudiante_id),
+
+    KEY idx_prestamos_estado (estado),
+
+    CONSTRAINT fk_prestamos_instrumento
+        FOREIGN KEY (instrumento_id)
+        REFERENCES instrumentos(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_prestamos_estudiante
+        FOREIGN KEY (estudiante_id)
+        REFERENCES usuarios(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+-- ============================================================
+-- DATOS INICIALES
+-- ============================================================
+
+
+-- ------------------------------------------------------------
+-- USUARIO ADMINISTRADOR
+-- ------------------------------------------------------------
+-- Esta contraseña es: admin123
+-- El hash corresponde a password_hash().
+-- Cámbiala posteriormente desde el sistema.
+
+INSERT INTO usuarios
+(
+    nombre,
+    apellido,
+    usuario,
+    email,
+    password,
+    rol,
+    estado
+)
+VALUES
+(
+    'Administrador',
+    'BandaCol',
+    'admin',
+    'admin@bandacol.local',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC2H2m9Q9GxE7kYQ5O6',
+    'admin',
+    'activo'
+);
+
+
+-- ------------------------------------------------------------
+-- ESTUDIANTE DE PRUEBA
+-- ------------------------------------------------------------
+-- Contraseña de prueba: estudiante123
+
+INSERT INTO usuarios
+(
+    nombre,
+    apellido,
+    usuario,
+    email,
+    password,
+    rol,
+    estado
+)
+VALUES
+(
+    'Juan',
+    'Estudiante',
+    'juan',
+    'juan@bandacol.local',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC2H2m9Q9GxE7kYQ5O6',
+    'estudiante',
+    'activo'
+);
+
+
+-- ============================================================
+-- INSTRUMENTOS DE PRUEBA
+-- ============================================================
+
+INSERT INTO instrumentos
+(
+    codigo,
+    nombre,
+    tipo,
+    marca,
+    modelo,
+    numero_serie,
+    estado,
+    ubicacion,
+    observaciones
+)
+VALUES
+(
+    'INS-001',
+    'Saxofón Alto',
+    'Viento',
+    'Yamaha',
+    'YAS-280',
+    'BC-SAX-001',
+    'Disponible',
+    'Sala de instrumentos',
+    'Instrumento en buen estado.'
+),
+
+(
+    'INS-002',
+    'Trompeta',
+    'Viento',
+    'Yamaha',
+    'YTR-2330',
+    'BC-TRO-001',
+    'Disponible',
+    'Sala de instrumentos',
+    'Instrumento en buen estado.'
+),
+
+(
+    'INS-003',
+    'Redoblante',
+    'Percusión',
+    'Mapex',
+    'MPX-001',
+    'Disponible',
+    'Sala de instrumentos',
+    'Incluye baquetas.'
+);
+
+
+-- ============================================================
+-- VERIFICACIÓN
+-- ============================================================
+
+SHOW TABLES;
+
+
+-- ------------------------------------------------------------
+-- ESTRUCTURA
+-- ------------------------------------------------------------
+
+DESCRIBE usuarios;
+
+DESCRIBE instrumentos;
+
+DESCRIBE prestamos;
+
+
+-- ------------------------------------------------------------
+-- DATOS
+-- ------------------------------------------------------------
+
+SELECT * FROM usuarios;
+
+SELECT * FROM instrumentos;
+
+SELECT * FROM prestamos;
+
+
+-- ============================================================
+-- FIN
+-- ============================================================
+
+
+
+corrección instrumentos de PRUEBA
+-- ============================================================
+-- INSTRUMENTOS DE PRUEBA
+-- ============================================================
+
+INSERT INTO instrumentos
+(
+    codigo,
+    nombre,
+    tipo,
+    marca,
+    modelo,
+    numero_serie,
+    estado,
+    ubicacion,
+    observaciones
+)
+VALUES
+(
+    'INS-001',
+    'Saxofón Alto',
+    'Viento',
+    'Yamaha',
+    'YAS-280',
+    'BC-SAX-001',
+    'Disponible',
+    'Sala de instrumentos',
+    'Instrumento en buen estado.'
+),
+(
+    'INS-002',
+    'Trompeta',
+    'Viento',
+    'Yamaha',
+    'YTR-2330',
+    'BC-TRO-001',
+    'Disponible',
+    'Sala de instrumentos',
+    'Instrumento en buen estado.'
+),
+(
+    'INS-003',
+    'Redoblante',
+    'Percusión',
+    'Mapex',
+    'MPX-001',
+    'BC-RED-001',
+    'Disponible',
+    'Sala de instrumentos',
+    'Incluye baquetas.'
+);
